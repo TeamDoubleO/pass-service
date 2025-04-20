@@ -13,7 +13,7 @@ env:
   DOCKER_TAG: latest
 
 jobs:
-  build-test:
+  test:
     if: github.event_name == 'pull_request' && github.base_ref == 'develop'
     runs-on: ubuntu-latest
 
