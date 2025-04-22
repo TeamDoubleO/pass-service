@@ -42,8 +42,8 @@ public class SecurityGroupController {
 
     @Operation(summary = "Security Group remove API", description = "Security Group을 삭제하기 위한 API")
     @DeleteMapping("/{groupId}")
-    public ResponseEntity<Void> removeSecurityGroup(@PathVariable Long groupId) {
-        securityGroupService.removeSecurityGroup(groupId);
+    public ResponseEntity<Void> deleteSecurityGroup(@PathVariable Long groupId) {
+        securityGroupService.deleteSecurityGroup(groupId);
         return ResponseEntity.noContent().build();
     }
 
@@ -71,14 +71,14 @@ public class SecurityGroupController {
 
     @Operation(summary = "Security Group Member delete API", description = "Security Group의 Member를 삭제하기 위한 API")
     @DeleteMapping("/{groupId}/members/{employeeId}")
-    public ResponseEntity<Void> removeGroupMember(
+    public ResponseEntity<Void> deleteGroupMember(
             @PathVariable Long groupId,
             @PathVariable Long employeeId
     ) {
         GroupMemberDto groupMemberDto = new GroupMemberDto();
         groupMemberDto.setGroupId(groupId);
         groupMemberDto.setEmployeeId(employeeId);
-        securityGroupService.removeGroupMember(groupMemberDto);
+        securityGroupService.deleteGroupMember(groupMemberDto);
         return ResponseEntity.noContent().build();
     }
 
@@ -100,14 +100,14 @@ public class SecurityGroupController {
 
     @Operation(summary = "Security Group Area delete API", description = "Security Group에 접근 가능 구역을 삭제하기 위한 API")
     @DeleteMapping("/{groupId}/areas/{areaId}")
-    public ResponseEntity<Void> removeGroupArea(
+    public ResponseEntity<Void> deleteGroupArea(
             @PathVariable Long groupId,
             @PathVariable Long areaId
     ) {
         GroupAreaDto groupAreaDto = new GroupAreaDto();
         groupAreaDto.setGroupId(groupId);
         groupAreaDto.setAreaId(areaId);
-        securityGroupService.removeGroupArea(groupAreaDto);
+        securityGroupService.deleteGroupArea(groupAreaDto);
         return ResponseEntity.noContent().build();
     }
 }

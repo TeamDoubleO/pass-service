@@ -12,10 +12,12 @@ import com.doubleo.accessservice.domain.securitygroup.repository.SecurityGroupRe
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class SecurityGroupServiceImpl implements SecurityGroupService {
     private final GroupAreaRepository groupAreaRepository;
@@ -41,10 +43,11 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     }
 
     @Override
-    public void removeSecurityGroup(Long groupId) {
+    public void deleteSecurityGroup(Long groupId) {
         securityGroupRepository.deleteById(groupId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<SecurityGroupDto> getAllSecurityGroups() {
         return securityGroupRepository.findAll().stream()
@@ -60,10 +63,11 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     }
 
     @Override
-    public void removeGroupMember(GroupMemberDto groupMemberDto) {
+    public void deleteGroupMember(GroupMemberDto groupMemberDto) {
         groupMemberRepository.deleteByGroupIdandEmployeeId(groupMemberDto.getGroupId(), groupMemberDto.getEmployeeId());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<GroupMemberDto> getAllGroupMembers(Long groupId) {
         return groupMemberRepository.findAllByGroupId(groupId).stream()
@@ -79,10 +83,11 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     }
 
     @Override
-    public void removeGroupArea(GroupAreaDto groupAreaDto) {
+    public void deleteGroupArea(GroupAreaDto groupAreaDto) {
         groupAreaRepository.deleteByGroupIdandGroupAreaId(groupAreaDto.getGroupId(), groupAreaDto.getAreaId());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<GroupAreaDto> getAllGroupAreas(Long groupId) {
         return groupAreaRepository.findAllByGroupId(groupId).stream()

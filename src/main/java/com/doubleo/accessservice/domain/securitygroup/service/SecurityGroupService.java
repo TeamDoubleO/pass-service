@@ -9,14 +9,14 @@ import java.util.List;
 public interface SecurityGroupService {
     SecurityGroupDto createSecurityGroup(SecurityGroupDto securityGroupDto);
     SecurityGroupDto updateSecurityGroup(SecurityGroupDto securityGroupDto);
-    void removeSecurityGroup(Long groupId);
+    void deleteSecurityGroup(Long groupId);
     List<SecurityGroupDto> getAllSecurityGroups();
 
     GroupMemberDto addGroupMember(GroupMemberDto groupMemberDto);
-    void removeGroupMember(GroupMemberDto groupMemberDto);
+    void deleteGroupMember(GroupMemberDto groupMemberDto);
     List<GroupMemberDto> getAllGroupMembers(Long groupId);
 
     GroupAreaDto addGroupArea(GroupAreaDto groupAreaDto);
-    void removeGroupArea(GroupAreaDto groupAreaDto);
+    void deleteGroupArea(GroupAreaDto groupAreaDto);
     List<GroupAreaDto> getAllGroupAreas(Long groupId);
 }
