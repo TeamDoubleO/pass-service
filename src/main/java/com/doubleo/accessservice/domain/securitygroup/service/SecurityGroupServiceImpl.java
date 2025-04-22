@@ -18,11 +18,11 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class SecurityGroupServiceImpl implements SecurityGroupService {
-    GroupAreaRepository groupAreaRepository;
-    GroupMemberRepository groupMemberRepository;
-    SecurityGroupRepository securityGroupRepository;
+    private final GroupAreaRepository groupAreaRepository;
+    private final GroupMemberRepository groupMemberRepository;
+    private final SecurityGroupRepository securityGroupRepository;
 
-    ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Override
     public SecurityGroupDto createSecurityGroup(SecurityGroupDto securityGroupDto) {
