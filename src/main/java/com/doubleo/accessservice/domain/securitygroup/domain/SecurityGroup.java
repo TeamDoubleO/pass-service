@@ -29,6 +29,11 @@ public class SecurityGroup extends BaseTimeEntity {
         this.description = description;
     }
 
+    public void updateSecurityGroup(String groupName, String description) {
+        this.groupName = groupName;
+        this.description = description;
+    }
+
     public static SecurityGroup createSecurityGroup(String groupName, String description) {
         return SecurityGroup.builder().groupName(groupName).description(description).build();
     }
