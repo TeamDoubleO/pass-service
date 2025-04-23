@@ -31,6 +31,9 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
 
     @Override
     public SecurityGroupResponse createSecurityGroup(SecurityGroupRequest request) {
+        if (securityGroupRepository.existsByGroupName(request.groupName())) {
+            throw new IllegalArgumentException("Group name already exists");
+        }
         SecurityGroup securityGroup =
                 SecurityGroup.createSecurityGroup(request.groupName(), request.description());
         securityGroupRepository.save(securityGroup);
@@ -41,9 +44,12 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     public SecurityGroupResponse updateSecurityGroup(Long groupId, SecurityGroupRequest request) {
         Optional<SecurityGroup> securityGroup = securityGroupRepository.findById(groupId);
         if (securityGroup.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("Group not found");
         }
         SecurityGroup securityGroupEntity = securityGroup.get();
+        if (securityGroupRepository.existsByGroupName(request.groupName())) {
+            throw new IllegalArgumentException("Group name already exists");
+        }
         securityGroupEntity.updateSecurityGroup(request.groupName(), request.description());
         securityGroupRepository.save(securityGroupEntity);
         return SecurityGroupResponse.from(securityGroupEntity);
@@ -64,9 +70,13 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     public GroupMemberResponse addGroupMember(Long groupId, GroupMemberRequest request) {
         Optional<SecurityGroup> securityGroup = securityGroupRepository.findById(groupId);
         if (securityGroup.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("Group not found");
         }
         SecurityGroup securityGroupEntity = securityGroup.get();
+        if (groupMemberRepository.existsBySecurityGroup_IdAndEmployeeId(
+                groupId, request.employeeId())) {
+            throw new IllegalArgumentException("Employee id already exists");
+        }
         GroupMember groupMember =
                 GroupMember.createGroupMember(securityGroupEntity, request.employeeId());
         groupMemberRepository.save(groupMember);
@@ -90,9 +100,12 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     public GroupAreaResponse addGroupArea(Long groupId, GroupAreaRequest request) {
         Optional<SecurityGroup> securityGroup = securityGroupRepository.findById(groupId);
         if (securityGroup.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("Group not found");
         }
         SecurityGroup securityGroupEntity = securityGroup.get();
+        if (groupAreaRepository.existsBySecurityGroup_IdAndAreaId(groupId, request.areaId())) {
+            throw new IllegalArgumentException("Area id already exists");
+        }
         GroupArea groupArea = GroupArea.createGroupArea(securityGroupEntity, request.areaId());
         groupAreaRepository.save(groupArea);
         return GroupAreaResponse.from(groupArea);
