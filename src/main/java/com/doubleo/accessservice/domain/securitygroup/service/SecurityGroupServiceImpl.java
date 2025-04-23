@@ -10,6 +10,7 @@ import com.doubleo.accessservice.domain.securitygroup.repository.GroupAreaReposi
 import com.doubleo.accessservice.domain.securitygroup.repository.GroupMemberRepository;
 import com.doubleo.accessservice.domain.securitygroup.repository.SecurityGroupRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -37,11 +38,12 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
 
     @Override
     public SecurityGroupDto updateSecurityGroup(SecurityGroupDto securityGroupDto) {
-        SecurityGroup securityGroup =
-                securityGroupRepository.findByGroupId(securityGroupDto.getId());
-        securityGroup.updateSecurityGroup(
+        Optional<SecurityGroup> securityGroup =
+                securityGroupRepository.findById(securityGroupDto.getId());
+        SecurityGroup securityGroupEntity = securityGroup.get();
+        securityGroupEntity.updateSecurityGroup(
                 securityGroupDto.getGroupName(), securityGroupDto.getDescription());
-        securityGroupRepository.save(securityGroup);
+        securityGroupRepository.save(securityGroupEntity);
         return securityGroupDto;
     }
 
@@ -60,10 +62,11 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
 
     @Override
     public GroupMemberDto addGroupMember(GroupMemberDto groupMemberDto) {
-        SecurityGroup securityGroup =
-                securityGroupRepository.findByGroupId(groupMemberDto.getGroupId());
+        Optional<SecurityGroup> securityGroup =
+                securityGroupRepository.findById(groupMemberDto.getGroupId());
+        SecurityGroup securityGroupEntity = securityGroup.get();
         GroupMember groupMember =
-                GroupMember.createGroupMember(securityGroup, groupMemberDto.getEmployeeId());
+                GroupMember.createGroupMember(securityGroupEntity, groupMemberDto.getEmployeeId());
         groupMemberRepository.save(groupMember);
         return groupMemberDto;
     }
@@ -84,9 +87,11 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
 
     @Override
     public GroupAreaDto addGroupArea(GroupAreaDto groupAreaDto) {
-        SecurityGroup securityGroup =
-                securityGroupRepository.findByGroupId(groupAreaDto.getGroupId());
-        GroupArea groupArea = GroupArea.createGroupArea(securityGroup, groupAreaDto.getAreaId());
+        Optional<SecurityGroup> securityGroup =
+                securityGroupRepository.findById(groupAreaDto.getGroupId());
+        SecurityGroup securityGroupEntity = securityGroup.get();
+        GroupArea groupArea =
+                GroupArea.createGroupArea(securityGroupEntity, groupAreaDto.getAreaId());
         groupAreaRepository.save(groupArea);
         return groupAreaDto;
     }
