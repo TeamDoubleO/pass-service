@@ -5,9 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> {
-    Iterable<GroupMember> findByGroupId(Long groupId);
+    List<GroupMember> findAllBySecurityGroup_Id(Long groupId);
 
-    List<GroupMember> findAllByGroupId(Long groupId);
-
-    void deleteByGroupIdandEmployeeId(Long groupId, Long employeeId);
+    void deleteBySecurityGroup_IdAndEmployeeId(Long groupId, Long employeeId);
 }

@@ -70,14 +70,14 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
 
     @Override
     public void deleteGroupMember(GroupMemberDto groupMemberDto) {
-        groupMemberRepository.deleteByGroupIdandEmployeeId(
+        groupMemberRepository.deleteBySecurityGroup_IdAndEmployeeId(
                 groupMemberDto.getGroupId(), groupMemberDto.getEmployeeId());
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<GroupMemberDto> getAllGroupMembers(Long groupId) {
-        return groupMemberRepository.findAllByGroupId(groupId).stream()
+        return groupMemberRepository.findAllBySecurityGroup_Id(groupId).stream()
                 .map(member -> modelMapper.map(member, GroupMemberDto.class))
                 .toList();
     }
@@ -93,14 +93,14 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
 
     @Override
     public void deleteGroupArea(GroupAreaDto groupAreaDto) {
-        groupAreaRepository.deleteByGroupIdandGroupAreaId(
+        groupAreaRepository.deleteBySecurityGroup_IdAndAreaId(
                 groupAreaDto.getGroupId(), groupAreaDto.getAreaId());
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<GroupAreaDto> getAllGroupAreas(Long groupId) {
-        return groupAreaRepository.findAllByGroupId(groupId).stream()
+        return groupAreaRepository.findAllBySecurityGroup_Id(groupId).stream()
                 .map(area -> modelMapper.map(area, GroupAreaDto.class))
                 .toList();
     }
