@@ -1,8 +1,10 @@
 package com.doubleo.accessservice.domain.securitygroup.service;
 
-import com.doubleo.accessservice.domain.securitygroup.dto.GroupAreaDto;
-import com.doubleo.accessservice.domain.securitygroup.dto.GroupMemberDto;
+import com.doubleo.accessservice.domain.securitygroup.dto.request.GroupAreaRequest;
+import com.doubleo.accessservice.domain.securitygroup.dto.request.GroupMemberRequest;
 import com.doubleo.accessservice.domain.securitygroup.dto.request.SecurityGroupRequest;
+import com.doubleo.accessservice.domain.securitygroup.dto.response.GroupAreaResponse;
+import com.doubleo.accessservice.domain.securitygroup.dto.response.GroupMemberResponse;
 import com.doubleo.accessservice.domain.securitygroup.dto.response.SecurityGroupResponse;
 import java.util.List;
 
@@ -15,15 +17,15 @@ public interface SecurityGroupService {
 
     List<SecurityGroupResponse> getAllSecurityGroups();
 
-    GroupMemberDto addGroupMember(GroupMemberDto groupMemberDto);
+    GroupMemberResponse addGroupMember(Long groupId, GroupMemberRequest request);
 
-    void deleteGroupMember(GroupMemberDto groupMemberDto);
+    void deleteGroupMember(Long groupId, GroupMemberRequest request);
 
-    List<GroupMemberDto> getAllGroupMembers(Long groupId);
+    List<GroupMemberResponse> getAllGroupMembers(Long groupId);
 
-    GroupAreaDto addGroupArea(GroupAreaDto groupAreaDto);
+    GroupAreaResponse addGroupArea(Long groupId, GroupAreaRequest request);
 
-    void deleteGroupArea(GroupAreaDto groupAreaDto);
+    void deleteGroupArea(Long groupId, GroupAreaRequest request);
 
-    List<GroupAreaDto> getAllGroupAreas(Long groupId);
+    List<GroupAreaResponse> getAllGroupAreas(Long groupId);
 }

@@ -3,9 +3,11 @@ package com.doubleo.accessservice.domain.securitygroup.service;
 import com.doubleo.accessservice.domain.securitygroup.domain.GroupArea;
 import com.doubleo.accessservice.domain.securitygroup.domain.GroupMember;
 import com.doubleo.accessservice.domain.securitygroup.domain.SecurityGroup;
-import com.doubleo.accessservice.domain.securitygroup.dto.GroupAreaDto;
-import com.doubleo.accessservice.domain.securitygroup.dto.GroupMemberDto;
+import com.doubleo.accessservice.domain.securitygroup.dto.request.GroupAreaRequest;
+import com.doubleo.accessservice.domain.securitygroup.dto.request.GroupMemberRequest;
 import com.doubleo.accessservice.domain.securitygroup.dto.request.SecurityGroupRequest;
+import com.doubleo.accessservice.domain.securitygroup.dto.response.GroupAreaResponse;
+import com.doubleo.accessservice.domain.securitygroup.dto.response.GroupMemberResponse;
 import com.doubleo.accessservice.domain.securitygroup.dto.response.SecurityGroupResponse;
 import com.doubleo.accessservice.domain.securitygroup.repository.GroupAreaRepository;
 import com.doubleo.accessservice.domain.securitygroup.repository.GroupMemberRepository;
@@ -36,15 +38,13 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     }
 
     @Override
-    public SecurityGroupResponse updateSecurityGroup(
-            Long groupId, SecurityGroupRequest securityGroupRequest) {
+    public SecurityGroupResponse updateSecurityGroup(Long groupId, SecurityGroupRequest request) {
         Optional<SecurityGroup> securityGroup = securityGroupRepository.findById(groupId);
         if (securityGroup.isEmpty()) {
             return null;
         }
         SecurityGroup securityGroupEntity = securityGroup.get();
-        securityGroupEntity.updateSecurityGroup(
-                securityGroupRequest.groupName(), securityGroupRequest.description());
+        securityGroupEntity.updateSecurityGroup(request.groupName(), request.description());
         securityGroupRepository.save(securityGroupEntity);
         return SecurityGroupResponse.from(securityGroupEntity);
     }
@@ -61,58 +61,53 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     }
 
     @Override
-    public GroupMemberDto addGroupMember(GroupMemberDto groupMemberDto) {
-        Optional<SecurityGroup> securityGroup =
-                securityGroupRepository.findById(groupMemberDto.getGroupId());
+    public GroupMemberResponse addGroupMember(Long groupId, GroupMemberRequest request) {
+        Optional<SecurityGroup> securityGroup = securityGroupRepository.findById(groupId);
         if (securityGroup.isEmpty()) {
             return null;
         }
         SecurityGroup securityGroupEntity = securityGroup.get();
         GroupMember groupMember =
-                GroupMember.createGroupMember(securityGroupEntity, groupMemberDto.getEmployeeId());
+                GroupMember.createGroupMember(securityGroupEntity, request.employeeId());
         groupMemberRepository.save(groupMember);
-        return groupMemberDto;
+        return GroupMemberResponse.from(groupMember);
     }
 
     @Override
-    public void deleteGroupMember(GroupMemberDto groupMemberDto) {
-        groupMemberRepository.deleteBySecurityGroup_IdAndEmployeeId(
-                groupMemberDto.getGroupId(), groupMemberDto.getEmployeeId());
+    public void deleteGroupMember(Long groupId, GroupMemberRequest request) {
+        groupMemberRepository.deleteBySecurityGroup_IdAndEmployeeId(groupId, request.employeeId());
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<GroupMemberDto> getAllGroupMembers(Long groupId) {
+    public List<GroupMemberResponse> getAllGroupMembers(Long groupId) {
         return groupMemberRepository.findAllBySecurityGroup_Id(groupId).stream()
-                .map(member -> modelMapper.map(member, GroupMemberDto.class))
+                .map(GroupMemberResponse::from)
                 .toList();
     }
 
     @Override
-    public GroupAreaDto addGroupArea(GroupAreaDto groupAreaDto) {
-        Optional<SecurityGroup> securityGroup =
-                securityGroupRepository.findById(groupAreaDto.getGroupId());
+    public GroupAreaResponse addGroupArea(Long groupId, GroupAreaRequest request) {
+        Optional<SecurityGroup> securityGroup = securityGroupRepository.findById(groupId);
         if (securityGroup.isEmpty()) {
             return null;
         }
         SecurityGroup securityGroupEntity = securityGroup.get();
-        GroupArea groupArea =
-                GroupArea.createGroupArea(securityGroupEntity, groupAreaDto.getAreaId());
+        GroupArea groupArea = GroupArea.createGroupArea(securityGroupEntity, request.areaId());
         groupAreaRepository.save(groupArea);
-        return groupAreaDto;
+        return GroupAreaResponse.from(groupArea);
     }
 
     @Override
-    public void deleteGroupArea(GroupAreaDto groupAreaDto) {
-        groupAreaRepository.deleteBySecurityGroup_IdAndAreaId(
-                groupAreaDto.getGroupId(), groupAreaDto.getAreaId());
+    public void deleteGroupArea(Long groupId, GroupAreaRequest request) {
+        groupAreaRepository.deleteBySecurityGroup_IdAndAreaId(groupId, request.areaId());
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<GroupAreaDto> getAllGroupAreas(Long groupId) {
+    public List<GroupAreaResponse> getAllGroupAreas(Long groupId) {
         return groupAreaRepository.findAllBySecurityGroup_Id(groupId).stream()
-                .map(area -> modelMapper.map(area, GroupAreaDto.class))
+                .map(GroupAreaResponse::from)
                 .toList();
     }
 }

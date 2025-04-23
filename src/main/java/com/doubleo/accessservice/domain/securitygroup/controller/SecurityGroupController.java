@@ -1,8 +1,10 @@
 package com.doubleo.accessservice.domain.securitygroup.controller;
 
-import com.doubleo.accessservice.domain.securitygroup.dto.GroupAreaDto;
-import com.doubleo.accessservice.domain.securitygroup.dto.GroupMemberDto;
+import com.doubleo.accessservice.domain.securitygroup.dto.request.GroupAreaRequest;
+import com.doubleo.accessservice.domain.securitygroup.dto.request.GroupMemberRequest;
 import com.doubleo.accessservice.domain.securitygroup.dto.request.SecurityGroupRequest;
+import com.doubleo.accessservice.domain.securitygroup.dto.response.GroupAreaResponse;
+import com.doubleo.accessservice.domain.securitygroup.dto.response.GroupMemberResponse;
 import com.doubleo.accessservice.domain.securitygroup.dto.response.SecurityGroupResponse;
 import com.doubleo.accessservice.domain.securitygroup.service.SecurityGroupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,7 +59,8 @@ public class SecurityGroupController {
             summary = "Security Group Member get API",
             description = "Security Group의 Member를 조회하기 위한 API")
     @GetMapping("/{groupId}/members")
-    public ResponseEntity<List<GroupMemberDto>> getAllGroupMembers(@PathVariable Long groupId) {
+    public ResponseEntity<List<GroupMemberResponse>> getAllGroupMembers(
+            @PathVariable Long groupId) {
         return ResponseEntity.ok(securityGroupService.getAllGroupMembers(groupId));
     }
 
@@ -65,10 +68,9 @@ public class SecurityGroupController {
             summary = "Security Group Member add API",
             description = "Security Group의 Member를 추가하기 위한 API")
     @PostMapping("/{groupId}/members")
-    public ResponseEntity<GroupMemberDto> addGroupMember(
-            @PathVariable Long groupId, @RequestBody GroupMemberDto groupMemberDto) {
-        groupMemberDto.setGroupId(groupId);
-        return ResponseEntity.ok(securityGroupService.addGroupMember(groupMemberDto));
+    public ResponseEntity<GroupMemberResponse> addGroupMember(
+            @PathVariable Long groupId, @RequestBody GroupMemberRequest request) {
+        return ResponseEntity.ok(securityGroupService.addGroupMember(groupId, request));
     }
 
     @Operation(
@@ -76,11 +78,8 @@ public class SecurityGroupController {
             description = "Security Group의 Member를 삭제하기 위한 API")
     @DeleteMapping("/{groupId}/members/{employeeId}")
     public ResponseEntity<Void> deleteGroupMember(
-            @PathVariable Long groupId, @PathVariable Long employeeId) {
-        GroupMemberDto groupMemberDto = new GroupMemberDto();
-        groupMemberDto.setGroupId(groupId);
-        groupMemberDto.setEmployeeId(employeeId);
-        securityGroupService.deleteGroupMember(groupMemberDto);
+            @PathVariable Long groupId, @PathVariable GroupMemberRequest request) {
+        securityGroupService.deleteGroupMember(groupId, request);
         return ResponseEntity.noContent().build();
     }
 
@@ -88,7 +87,7 @@ public class SecurityGroupController {
             summary = "Security Group Area get API",
             description = "Security Group에 접근 가능 구역을 조회하기 위한 API")
     @GetMapping("/{groupId}/areas")
-    public ResponseEntity<List<GroupAreaDto>> getAllGroupAreas(@PathVariable Long groupId) {
+    public ResponseEntity<List<GroupAreaResponse>> getAllGroupAreas(@PathVariable Long groupId) {
         return ResponseEntity.ok(securityGroupService.getAllGroupAreas(groupId));
     }
 
@@ -96,10 +95,9 @@ public class SecurityGroupController {
             summary = "Security Group Area add API",
             description = "Security Group에 접근 가능 구역을 추가하기 위한 API")
     @PostMapping("/{groupId}/areas")
-    public ResponseEntity<GroupAreaDto> addGroupArea(
-            @PathVariable Long groupId, @RequestBody GroupAreaDto groupAreaDto) {
-        groupAreaDto.setGroupId(groupId);
-        return ResponseEntity.ok(securityGroupService.addGroupArea(groupAreaDto));
+    public ResponseEntity<GroupAreaResponse> addGroupArea(
+            @PathVariable Long groupId, @RequestBody GroupAreaRequest request) {
+        return ResponseEntity.ok(securityGroupService.addGroupArea(groupId, request));
     }
 
     @Operation(
@@ -107,11 +105,8 @@ public class SecurityGroupController {
             description = "Security Group에 접근 가능 구역을 삭제하기 위한 API")
     @DeleteMapping("/{groupId}/areas/{areaId}")
     public ResponseEntity<Void> deleteGroupArea(
-            @PathVariable Long groupId, @PathVariable Long areaId) {
-        GroupAreaDto groupAreaDto = new GroupAreaDto();
-        groupAreaDto.setGroupId(groupId);
-        groupAreaDto.setAreaId(areaId);
-        securityGroupService.deleteGroupArea(groupAreaDto);
+            @PathVariable Long groupId, @PathVariable GroupAreaRequest request) {
+        securityGroupService.deleteGroupArea(groupId, request);
         return ResponseEntity.noContent().build();
     }
 }
