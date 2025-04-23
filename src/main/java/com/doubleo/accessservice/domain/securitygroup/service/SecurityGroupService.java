@@ -2,17 +2,18 @@ package com.doubleo.accessservice.domain.securitygroup.service;
 
 import com.doubleo.accessservice.domain.securitygroup.dto.GroupAreaDto;
 import com.doubleo.accessservice.domain.securitygroup.dto.GroupMemberDto;
-import com.doubleo.accessservice.domain.securitygroup.dto.SecurityGroupDto;
+import com.doubleo.accessservice.domain.securitygroup.dto.request.SecurityGroupRequest;
+import com.doubleo.accessservice.domain.securitygroup.dto.response.SecurityGroupResponse;
 import java.util.List;
 
 public interface SecurityGroupService {
-    SecurityGroupDto createSecurityGroup(SecurityGroupDto securityGroupDto);
+    SecurityGroupResponse createSecurityGroup(SecurityGroupRequest request);
 
-    SecurityGroupDto updateSecurityGroup(SecurityGroupDto securityGroupDto);
+    SecurityGroupResponse updateSecurityGroup(Long groupId, SecurityGroupRequest request);
 
     void deleteSecurityGroup(Long groupId);
 
-    List<SecurityGroupDto> getAllSecurityGroups();
+    List<SecurityGroupResponse> getAllSecurityGroups();
 
     GroupMemberDto addGroupMember(GroupMemberDto groupMemberDto);
 

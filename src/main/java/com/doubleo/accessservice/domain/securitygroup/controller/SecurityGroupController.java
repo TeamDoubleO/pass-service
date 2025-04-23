@@ -2,7 +2,8 @@ package com.doubleo.accessservice.domain.securitygroup.controller;
 
 import com.doubleo.accessservice.domain.securitygroup.dto.GroupAreaDto;
 import com.doubleo.accessservice.domain.securitygroup.dto.GroupMemberDto;
-import com.doubleo.accessservice.domain.securitygroup.dto.SecurityGroupDto;
+import com.doubleo.accessservice.domain.securitygroup.dto.request.SecurityGroupRequest;
+import com.doubleo.accessservice.domain.securitygroup.dto.response.SecurityGroupResponse;
 import com.doubleo.accessservice.domain.securitygroup.service.SecurityGroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,17 +26,16 @@ public class SecurityGroupController {
         @ApiResponse(responseCode = "400", description = "BAD REQUEST")
     })
     @PostMapping
-    public ResponseEntity<SecurityGroupDto> createSecurityGroup(
-            @RequestBody SecurityGroupDto securityGroupDto) {
-        return ResponseEntity.ok(securityGroupService.createSecurityGroup(securityGroupDto));
+    public ResponseEntity<SecurityGroupResponse> createSecurityGroup(
+            @RequestBody SecurityGroupRequest request) {
+        return ResponseEntity.ok(securityGroupService.createSecurityGroup(request));
     }
 
     @Operation(summary = "Security Group update API", description = "Security Group을 수정하기 위한 API")
     @PatchMapping("/{groupId}")
-    public ResponseEntity<SecurityGroupDto> updateSecurityGroup(
-            @PathVariable Long groupId, @RequestBody SecurityGroupDto securityGroupDto) {
-        securityGroupDto.setId(groupId);
-        return ResponseEntity.ok(securityGroupService.updateSecurityGroup(securityGroupDto));
+    public ResponseEntity<SecurityGroupResponse> updateSecurityGroup(
+            @PathVariable Long groupId, @RequestBody SecurityGroupRequest request) {
+        return ResponseEntity.ok(securityGroupService.updateSecurityGroup(groupId, request));
     }
 
     @Operation(summary = "Security Group remove API", description = "Security Group을 삭제하기 위한 API")
@@ -49,7 +49,7 @@ public class SecurityGroupController {
             summary = "All Security Group get API",
             description = "모든 Security Group을 조회하기 위한 API")
     @GetMapping
-    public ResponseEntity<List<SecurityGroupDto>> getAllSecurityGroups() {
+    public ResponseEntity<List<SecurityGroupResponse>> getAllSecurityGroups() {
         return ResponseEntity.ok(securityGroupService.getAllSecurityGroups());
     }
 

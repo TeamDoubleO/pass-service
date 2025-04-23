@@ -5,7 +5,8 @@ import com.doubleo.accessservice.domain.securitygroup.domain.GroupMember;
 import com.doubleo.accessservice.domain.securitygroup.domain.SecurityGroup;
 import com.doubleo.accessservice.domain.securitygroup.dto.GroupAreaDto;
 import com.doubleo.accessservice.domain.securitygroup.dto.GroupMemberDto;
-import com.doubleo.accessservice.domain.securitygroup.dto.SecurityGroupDto;
+import com.doubleo.accessservice.domain.securitygroup.dto.request.SecurityGroupRequest;
+import com.doubleo.accessservice.domain.securitygroup.dto.response.SecurityGroupResponse;
 import com.doubleo.accessservice.domain.securitygroup.repository.GroupAreaRepository;
 import com.doubleo.accessservice.domain.securitygroup.repository.GroupMemberRepository;
 import com.doubleo.accessservice.domain.securitygroup.repository.SecurityGroupRepository;
@@ -27,27 +28,25 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     private final ModelMapper modelMapper;
 
     @Override
-    public SecurityGroupDto createSecurityGroup(SecurityGroupDto securityGroupDto) {
+    public SecurityGroupResponse createSecurityGroup(SecurityGroupRequest request) {
         SecurityGroup securityGroup =
-                SecurityGroup.createSecurityGroup(
-                        securityGroupDto.getGroupName(), securityGroupDto.getDescription());
+                SecurityGroup.createSecurityGroup(request.groupName(), request.description());
         securityGroupRepository.save(securityGroup);
-        securityGroupDto.setId(securityGroup.getId());
-        return securityGroupDto;
+        return SecurityGroupResponse.from(securityGroup);
     }
 
     @Override
-    public SecurityGroupDto updateSecurityGroup(SecurityGroupDto securityGroupDto) {
-        Optional<SecurityGroup> securityGroup =
-                securityGroupRepository.findById(securityGroupDto.getId());
+    public SecurityGroupResponse updateSecurityGroup(
+            Long groupId, SecurityGroupRequest securityGroupRequest) {
+        Optional<SecurityGroup> securityGroup = securityGroupRepository.findById(groupId);
         if (securityGroup.isEmpty()) {
             return null;
         }
         SecurityGroup securityGroupEntity = securityGroup.get();
         securityGroupEntity.updateSecurityGroup(
-                securityGroupDto.getGroupName(), securityGroupDto.getDescription());
+                securityGroupRequest.groupName(), securityGroupRequest.description());
         securityGroupRepository.save(securityGroupEntity);
-        return securityGroupDto;
+        return SecurityGroupResponse.from(securityGroupEntity);
     }
 
     @Override
@@ -57,10 +56,8 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<SecurityGroupDto> getAllSecurityGroups() {
-        return securityGroupRepository.findAll().stream()
-                .map(securityGroup -> modelMapper.map(securityGroup, SecurityGroupDto.class))
-                .toList();
+    public List<SecurityGroupResponse> getAllSecurityGroups() {
+        return securityGroupRepository.findAll().stream().map(SecurityGroupResponse::from).toList();
     }
 
     @Override
