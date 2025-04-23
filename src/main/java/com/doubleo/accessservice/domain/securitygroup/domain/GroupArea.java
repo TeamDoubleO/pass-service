@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "security_group_area")
+@Table(
+        name = "security_group_area",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"group_id", "area_id"}))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GroupArea {

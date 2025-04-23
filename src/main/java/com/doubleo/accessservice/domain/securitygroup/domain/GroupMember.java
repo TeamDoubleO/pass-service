@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "security_group_member")
+@Table(
+        name = "security_group_member",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"group_id", "employee_id"}))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GroupMember {
