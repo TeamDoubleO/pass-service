@@ -11,14 +11,14 @@ import com.doubleo.accessservice.domain.securitygroup.repository.GroupMemberRepo
 import com.doubleo.accessservice.domain.securitygroup.repository.SecurityGroupRepository;
 import java.util.List;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityGroupServiceImpl implements SecurityGroupService {
     private final GroupAreaRepository groupAreaRepository;
     private final GroupMemberRepository groupMemberRepository;
