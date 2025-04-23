@@ -40,6 +40,9 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     public SecurityGroupDto updateSecurityGroup(SecurityGroupDto securityGroupDto) {
         Optional<SecurityGroup> securityGroup =
                 securityGroupRepository.findById(securityGroupDto.getId());
+        if (securityGroup.isEmpty()) {
+            return null;
+        }
         SecurityGroup securityGroupEntity = securityGroup.get();
         securityGroupEntity.updateSecurityGroup(
                 securityGroupDto.getGroupName(), securityGroupDto.getDescription());
@@ -64,6 +67,9 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     public GroupMemberDto addGroupMember(GroupMemberDto groupMemberDto) {
         Optional<SecurityGroup> securityGroup =
                 securityGroupRepository.findById(groupMemberDto.getGroupId());
+        if (securityGroup.isEmpty()) {
+            return null;
+        }
         SecurityGroup securityGroupEntity = securityGroup.get();
         GroupMember groupMember =
                 GroupMember.createGroupMember(securityGroupEntity, groupMemberDto.getEmployeeId());
@@ -89,6 +95,9 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     public GroupAreaDto addGroupArea(GroupAreaDto groupAreaDto) {
         Optional<SecurityGroup> securityGroup =
                 securityGroupRepository.findById(groupAreaDto.getGroupId());
+        if (securityGroup.isEmpty()) {
+            return null;
+        }
         SecurityGroup securityGroupEntity = securityGroup.get();
         GroupArea groupArea =
                 GroupArea.createGroupArea(securityGroupEntity, groupAreaDto.getAreaId());
