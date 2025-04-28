@@ -9,7 +9,7 @@ permissions:
   packages: write
 
 env:
-  DOCKER_IMAGE_NAME: sunwoo11/access-service
+  DOCKER_IMAGE_NAME: sunwoo11/pass-service
   DOCKER_TAG: latest
 
 jobs:

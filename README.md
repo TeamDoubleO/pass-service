@@ -1,2 +1,2 @@
-# access-service
-출입 권한 관리 서비스
+# pass-service
+출입증 권한 관리 서비스
