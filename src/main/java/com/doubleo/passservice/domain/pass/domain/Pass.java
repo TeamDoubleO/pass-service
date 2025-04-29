@@ -2,11 +2,10 @@ package com.doubleo.passservice.domain.pass.domain;
 
 import com.doubleo.passservice.domain.common.model.BaseTimeEntity;
 import jakarta.persistence.*;
+import java.util.Date;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @Entity
 @Table(name = "pass")
