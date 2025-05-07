@@ -20,7 +20,7 @@ public class PassController {
 
     @Operation(summary = "All Member Pass get API", description = "모든 사용자의 Pass들을 조회하는 API")
     @GetMapping
-    public ResponseEntity<List<MemberPassInfoResponse>> getAllMemberPassInfo(
+    public ResponseEntity<List<MemberPassInfoResponse>> MemberPassInfoListGet(
             @RequestHeader("X-Member-Id") Long memberId) {
         return ResponseEntity.ok(passService.getAllMemberPassInfo(memberId));
     }
