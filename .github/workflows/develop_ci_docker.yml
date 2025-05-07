@@ -9,6 +9,10 @@ jobs:
   docker-build-and-push:
     runs-on: ubuntu-latest
 
+    env:
+      GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v3

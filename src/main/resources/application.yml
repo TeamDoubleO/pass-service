@@ -19,3 +19,4 @@ spring:
       - datasource
       - eureka
       - actuator
+      - grpc
