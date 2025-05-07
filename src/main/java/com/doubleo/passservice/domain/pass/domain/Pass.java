@@ -1,8 +1,9 @@
 package com.doubleo.passservice.domain.pass.domain;
 
 import com.doubleo.passservice.domain.common.model.BaseTimeEntity;
+import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import jakarta.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,16 +20,20 @@ public class Pass extends BaseTimeEntity {
     private Long id;
 
     @Column(name = "tenant_id", nullable = false)
-    private Long tenantId;
+    private String tenantId;
 
-    @Column(name = "request_member")
-    private String requestMember;
+    @Column(name = "hospital_id", nullable = false)
+    private Long hospitalId;
+
+    @Column(name = "member_id", nullable = false)
+    private Long memberId;
 
     @Column(name = "valid_time")
-    private Date validTime;
+    private LocalDateTime validTime;
 
-    @Column(name = "request_member_category")
-    private String requestMemberCategory;
+    @Column(name = "visit_category")
+    @Enumerated(EnumType.STRING)
+    private VisitCategory visitCategory;
 
     @Column(name = "patient_id")
     private Long patientId;
