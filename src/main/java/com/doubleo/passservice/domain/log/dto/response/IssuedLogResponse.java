@@ -1,0 +1,12 @@
+package com.doubleo.passservice.domain.log.dto.response;
+
+import com.doubleo.passservice.domain.pass.enums.VisitCategory;
+import java.time.LocalDateTime;
+
+public record IssuedLogResponse(
+        Long memberId,
+        String memberName,
+        Long passId,
+        LocalDateTime startAt,
+        LocalDateTime expiredAt,
+        VisitCategory visitCategory) {}

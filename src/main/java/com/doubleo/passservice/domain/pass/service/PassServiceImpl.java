@@ -47,8 +47,8 @@ public class PassServiceImpl implements PassService {
                             accessAreas,
                             pass.getVisitCategory(),
                             pass.getPatientId(),
-                            pass.getCreatedDt(),
-                            pass.getValidTime());
+                            pass.getStartAt(),
+                            pass.getExpiredAt());
             responses.add(response);
         }
         return responses;

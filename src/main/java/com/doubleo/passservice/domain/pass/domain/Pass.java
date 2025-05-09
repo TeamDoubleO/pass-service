@@ -1,6 +1,6 @@
 package com.doubleo.passservice.domain.pass.domain;
 
-import com.doubleo.passservice.domain.common.model.BaseTimeEntity;
+import com.doubleo.passservice.domain.common.model.BaseEntity;
 import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -12,15 +12,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "pass")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Pass extends BaseTimeEntity {
+public class Pass extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pass_id")
     private Long id;
-
-    @Column(name = "tenant_id", nullable = false)
-    private String tenantId;
 
     @Column(name = "hospital_id", nullable = false)
     private Long hospitalId;
@@ -28,8 +25,11 @@ public class Pass extends BaseTimeEntity {
     @Column(name = "member_id", nullable = false)
     private Long memberId;
 
-    @Column(name = "valid_time")
-    private LocalDateTime validTime;
+    @Column(name = "start_at", nullable = false)
+    private LocalDateTime startAt;
+
+    @Column(name = "expired_at", nullable = false)
+    private LocalDateTime expiredAt;
 
     @Column(name = "visit_category")
     @Enumerated(EnumType.STRING)

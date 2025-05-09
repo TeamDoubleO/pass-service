@@ -68,7 +68,7 @@ dependencies {
     implementation("org.modelmapper:modelmapper:3.1.1")
 
     // (1) hospital-interface 모듈
-    implementation "com.doubleo.grpc:hospital-interface:0.0.9.1"
+    implementation "com.doubleo.grpc:hospital-interface:0.1.0"
 
     // (2) gRPC 런타임
     implementation "io.grpc:grpc-netty:1.63.0"
@@ -78,6 +78,9 @@ dependencies {
     // (3) Spring Boot starter for gRPC 서버/클라이언트 자동설정
     implementation 'com.google.protobuf:protobuf-java:3.24.4'
     implementation 'net.devh:grpc-spring-boot-starter:3.1.0.RELEASE'
+
+    // Tenant-Context
+    implementation 'com.doubleo:tenant-context:-0.0.2'
 }
 
 dependencyManagement {
