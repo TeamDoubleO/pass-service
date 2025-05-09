@@ -88,7 +88,7 @@ dependencies {
     implementation 'net.devh:grpc-spring-boot-starter:3.1.0.RELEASE'
 
     // Tenant-Context
-    implementation 'com.doubleo:tenant-context:-0.0.2'
+    implementation 'com.doubleo:tenant-context:0.0.2'
 }
 
 dependencyManagement {

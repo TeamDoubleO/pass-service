@@ -24,7 +24,7 @@ public class LogController {
         return logService.getAllIssuedLog();
     }
 
-    @Operation(summary = "All issued log get API", description = "모든 출입증 발급 로그 조회 API")
+    @Operation(summary = "All issued log get API", description = "모든 출입 로그 조회 API")
     @GetMapping("/enter")
     public List<EnterLogResponse> EnterLogListGet(@RequestHeader("X-Admin-Id") Long adminId) {
         return logService.getAllEnterLog();
