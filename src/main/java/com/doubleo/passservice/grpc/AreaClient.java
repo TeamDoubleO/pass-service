@@ -1,8 +1,8 @@
 package com.doubleo.passservice.grpc;
 
-import com.doubleo.hospitalservice.domain.area.grpc.AreaIdRequest;
-import com.doubleo.hospitalservice.domain.area.grpc.AreaResponse;
-import com.doubleo.hospitalservice.domain.area.grpc.AreaServiceGrpc;
+import com.doubleo.hospitalservice.domain.area.grpc.server.AreaIdRequest;
+import com.doubleo.hospitalservice.domain.area.grpc.server.AreaResponse;
+import com.doubleo.hospitalservice.domain.area.grpc.server.AreaServiceGrpc;
 import com.doubleo.passservice.global.exception.CommonException;
 import com.doubleo.passservice.global.exception.errorcode.GrpcErrorCode;
 import io.grpc.StatusRuntimeException;
