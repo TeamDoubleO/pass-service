@@ -25,6 +25,9 @@ public class IssuedLog extends BaseEntity {
     @Column(name = "member_name", nullable = false)
     private String memberName;
 
+    @Column(name = "member_contact", nullable = false)
+    private String memberContact;
+
     @Column(name = "pass_id", nullable = false)
     private Long passId;
 
