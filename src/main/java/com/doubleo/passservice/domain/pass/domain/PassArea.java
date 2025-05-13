@@ -1,6 +1,6 @@
 package com.doubleo.passservice.domain.pass.domain;
 
-import com.doubleo.passservice.domain.common.model.BaseTimeEntity;
+import com.doubleo.passservice.domain.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,15 +10,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "pass_area")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PassArea extends BaseTimeEntity {
+public class PassArea extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pass_area_id")
     private Long id;
-
-    @Column(name = "tenant_id", nullable = false)
-    private Long tenantId;
 
     @JoinColumn(name = "pass_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)

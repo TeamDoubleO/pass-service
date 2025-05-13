@@ -12,11 +12,19 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseTimeEntity {
+public abstract class BaseEntity implements Tenant {
 
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdDt;
 
     @LastModifiedDate private LocalDateTime updatedDt;
+
+    @Column(name = "tenant_id", nullable = false)
+    private String tenantId;
+
+    @Override
+    public String getTenantId() {
+        return tenantId;
+    }
 }
