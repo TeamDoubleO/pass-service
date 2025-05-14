@@ -7,6 +7,7 @@ import com.doubleo.passservice.domain.log.dto.response.IssuedLogResponse;
 import com.doubleo.passservice.domain.log.repository.EnterLogRepository;
 import com.doubleo.passservice.domain.log.repository.IssuedLogRepository;
 import com.doubleo.passservice.global.util.TenantValidator;
+import com.doubleo.passservice.grpc.AreaClient;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class LogServiceImpl implements LogService {
     private final EnterLogRepository enterLogRepository;
     private final IssuedLogRepository issuedLogRepository;
     private final TenantValidator tenantValidator;
+    private final AreaClient areaClient;
 
     @Override
     public List<IssuedLogResponse> getAllIssuedLog() {
@@ -47,9 +49,11 @@ public class LogServiceImpl implements LogService {
                         enterLog ->
                                 new EnterLogResponse(
                                         enterLog.getAreaId(),
+                                        areaClient.getAreaById(enterLog.getAreaId()).getAreaName(),
                                         enterLog.getMemberId(),
                                         enterLog.getMemberName(),
-                                        enterLog.getPassId()))
+                                        enterLog.getPassId(),
+                                        enterLog.getCreatedDt()))
                 .toList();
     }
 }
