@@ -6,7 +6,7 @@ import com.doubleo.passservice.domain.pass.dto.AccessAreaInfo;
 import com.doubleo.passservice.domain.pass.dto.response.MemberPassInfoResponse;
 import com.doubleo.passservice.domain.pass.repository.PassAreaRepository;
 import com.doubleo.passservice.domain.pass.repository.PassRepository;
-import com.doubleo.passservice.grpc.AreaClient;
+import com.doubleo.passservice.grpc.client.AreaClient;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

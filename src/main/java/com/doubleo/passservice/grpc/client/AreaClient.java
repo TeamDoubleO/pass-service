@@ -1,4 +1,4 @@
-package com.doubleo.passservice.grpc;
+package com.doubleo.passservice.grpc.client;
 
 import com.doubleo.hospitalservice.domain.area.grpc.server.AreaIdRequest;
 import com.doubleo.hospitalservice.domain.area.grpc.server.AreaResponse;
