@@ -7,7 +7,7 @@ import com.doubleo.passservice.domain.log.dto.response.IssuedLogResponse;
 import com.doubleo.passservice.domain.log.repository.EnterLogRepository;
 import com.doubleo.passservice.domain.log.repository.IssuedLogRepository;
 import com.doubleo.passservice.global.util.TenantValidator;
-import com.doubleo.passservice.grpc.AreaClient;
+import com.doubleo.passservice.grpc.client.AreaClient;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
