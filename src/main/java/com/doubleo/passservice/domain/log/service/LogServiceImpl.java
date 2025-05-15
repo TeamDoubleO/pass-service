@@ -11,6 +11,8 @@ import com.doubleo.passservice.grpc.client.AreaClient;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,39 +27,35 @@ public class LogServiceImpl implements LogService {
     private final AreaClient areaClient;
 
     @Override
-    public List<IssuedLogResponse> getAllIssuedLog() {
+    public Page<IssuedLogResponse> getAllIssuedLog(Pageable pageable) {
         String tenantId = tenantValidator.getTenantId();
-        List<IssuedLog> issuedLogs = issuedLogRepository.findAllByTenantId(tenantId);
-        return issuedLogs.stream()
-                .map(
-                        issuedLog ->
-                                new IssuedLogResponse(
-                                        issuedLog.getMemberId(),
-                                        issuedLog.getMemberName(),
-                                        issuedLog.getPassId(),
-                                        issuedLog.getAreaCode(),
-                                        buildAreaName(issuedLog.getAreaCode()),
-                                        issuedLog.getStartAt(),
-                                        issuedLog.getExpiredAt(),
-                                        issuedLog.getVisitCategory()))
-                .toList();
+        Page<IssuedLog> issuedLogs = issuedLogRepository.findAllByTenantId(tenantId, pageable);
+        return issuedLogs.map(
+                issuedLog ->
+                        new IssuedLogResponse(
+                                issuedLog.getMemberId(),
+                                issuedLog.getMemberName(),
+                                issuedLog.getPassId(),
+                                issuedLog.getAreaCode(),
+                                buildAreaName(issuedLog.getAreaCode()),
+                                issuedLog.getStartAt(),
+                                issuedLog.getExpiredAt(),
+                                issuedLog.getVisitCategory()));
     }
 
     @Override
-    public List<EnterLogResponse> getAllEnterLog() {
+    public Page<EnterLogResponse> getAllEnterLog(Pageable pageable) {
         String tenantId = tenantValidator.getTenantId();
-        List<EnterLog> enterLogs = enterLogRepository.findAllByTenantId(tenantId);
-        return enterLogs.stream()
-                .map(
-                        enterLog ->
-                                new EnterLogResponse(
-                                        enterLog.getAreaId(),
-                                        areaClient.getAreaById(enterLog.getAreaId()).getAreaName(),
-                                        enterLog.getMemberId(),
-                                        enterLog.getMemberName(),
-                                        enterLog.getPassId(),
-                                        enterLog.getCreatedDt()))
-                .toList();
+        Page<EnterLog> enterLogs = enterLogRepository.findAllByTenantId(tenantId, pageable);
+        return enterLogs.map(
+                enterLog ->
+                        new EnterLogResponse(
+                                enterLog.getAreaId(),
+                                areaClient.getAreaById(enterLog.getAreaId()).getAreaName(),
+                                enterLog.getMemberId(),
+                                enterLog.getMemberName(),
+                                enterLog.getPassId(),
+                                enterLog.getCreatedDt()));
     }
 
     private List<String> buildAreaName(String areaCode) {

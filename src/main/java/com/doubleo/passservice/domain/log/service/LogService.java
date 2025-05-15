@@ -2,10 +2,11 @@ package com.doubleo.passservice.domain.log.service;
 
 import com.doubleo.passservice.domain.log.dto.response.EnterLogResponse;
 import com.doubleo.passservice.domain.log.dto.response.IssuedLogResponse;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface LogService {
-    List<IssuedLogResponse> getAllIssuedLog();
+    Page<IssuedLogResponse> getAllIssuedLog(Pageable pageable);
 
-    List<EnterLogResponse> getAllEnterLog();
+    Page<EnterLogResponse> getAllEnterLog(Pageable pageable);
 }
