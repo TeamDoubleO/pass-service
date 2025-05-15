@@ -27,22 +27,8 @@ public class PassServiceImpl implements PassService {
         List<MemberPassInfoResponse> responses = new ArrayList<>();
         for (Pass pass : passes) {
             List<PassArea> passAreas = passAreaRepository.findAllByPass(pass);
-            //            List<AccessAreaInfo> accessAreas =
-            //                    passAreas.stream()
-            //                            .map(
-            //                                    passArea -> {
-            //                                        String areaName =
-            //                                                areaClient
-            //
-            // .getAreaById(passArea.getAreaId())
-            //                                                        .getAreaName();
-            //                                        return new
-            // AccessAreaInfo(passArea.getAreaId(), areaName);
-            //                                    })
-            //                            .toList();
             List<List<String>> areaNames = new ArrayList<>();
             for (PassArea passArea : passAreas) {
-                String[] parts = passArea.getAreaCode().split("_");
                 List<String> areaName = buildAreaName(passArea.getAreaCode());
                 areaNames.add(areaName);
             }
