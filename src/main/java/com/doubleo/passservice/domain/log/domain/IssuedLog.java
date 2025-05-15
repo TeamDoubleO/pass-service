@@ -31,9 +31,6 @@ public class IssuedLog extends BaseEntity {
     @Column(name = "pass_id", nullable = false)
     private Long passId;
 
-    @Column(name = "area_code", nullable = false)
-    private String areaCode;
-
     @Column(name = "start_at", nullable = false)
     private LocalDateTime startAt;
 

@@ -5,6 +5,7 @@ import com.doubleo.passservice.domain.log.domain.IssuedLog;
 import com.doubleo.passservice.domain.log.dto.response.EnterLogResponse;
 import com.doubleo.passservice.domain.log.dto.response.IssuedLogResponse;
 import com.doubleo.passservice.domain.log.repository.EnterLogRepository;
+import com.doubleo.passservice.domain.log.repository.IssuedLogAreaRepository;
 import com.doubleo.passservice.domain.log.repository.IssuedLogRepository;
 import com.doubleo.passservice.global.util.TenantValidator;
 import com.doubleo.passservice.grpc.client.AreaClient;
@@ -23,6 +24,7 @@ public class LogServiceImpl implements LogService {
 
     private final EnterLogRepository enterLogRepository;
     private final IssuedLogRepository issuedLogRepository;
+    private final IssuedLogAreaRepository issuedLogAreaRepository;
     private final TenantValidator tenantValidator;
     private final AreaClient areaClient;
 
@@ -30,17 +32,23 @@ public class LogServiceImpl implements LogService {
     public Page<IssuedLogResponse> getAllIssuedLog(Pageable pageable) {
         String tenantId = tenantValidator.getTenantId();
         Page<IssuedLog> issuedLogs = issuedLogRepository.findAllByTenantId(tenantId, pageable);
+
         return issuedLogs.map(
-                issuedLog ->
-                        new IssuedLogResponse(
-                                issuedLog.getMemberId(),
-                                issuedLog.getMemberName(),
-                                issuedLog.getPassId(),
-                                issuedLog.getAreaCode(),
-                                buildAreaName(issuedLog.getAreaCode()),
-                                issuedLog.getStartAt(),
-                                issuedLog.getExpiredAt(),
-                                issuedLog.getVisitCategory()));
+                issuedLog -> {
+                    List<String> areaCodes =
+                            issuedLogAreaRepository.findAreaCodesByIssuedLog(issuedLog);
+                    List<List<String>> areaNames =
+                            areaCodes.stream().map(this::buildAreaName).toList();
+
+                    return new IssuedLogResponse(
+                            issuedLog.getMemberId(),
+                            issuedLog.getMemberName(),
+                            issuedLog.getPassId(),
+                            areaNames,
+                            issuedLog.getStartAt(),
+                            issuedLog.getExpiredAt(),
+                            issuedLog.getVisitCategory());
+                });
     }
 
     @Override
