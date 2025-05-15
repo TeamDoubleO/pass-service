@@ -2,7 +2,6 @@ package com.doubleo.passservice.domain.pass.service;
 
 import com.doubleo.passservice.domain.pass.domain.Pass;
 import com.doubleo.passservice.domain.pass.domain.PassArea;
-import com.doubleo.passservice.domain.pass.dto.AccessAreaInfo;
 import com.doubleo.passservice.domain.pass.dto.response.MemberPassInfoResponse;
 import com.doubleo.passservice.domain.pass.repository.PassAreaRepository;
 import com.doubleo.passservice.domain.pass.repository.PassRepository;
@@ -28,23 +27,17 @@ public class PassServiceImpl implements PassService {
         List<MemberPassInfoResponse> responses = new ArrayList<>();
         for (Pass pass : passes) {
             List<PassArea> passAreas = passAreaRepository.findAllByPass(pass);
-            List<AccessAreaInfo> accessAreas =
-                    passAreas.stream()
-                            .map(
-                                    passArea -> {
-                                        String areaName =
-                                                areaClient
-                                                        .getAreaById(passArea.getAreaId())
-                                                        .getAreaName();
-                                        return new AccessAreaInfo(passArea.getAreaId(), areaName);
-                                    })
-                            .toList();
+            List<List<String>> areaNames = new ArrayList<>();
+            for (PassArea passArea : passAreas) {
+                List<String> areaName = buildAreaName(passArea.getAreaCode());
+                areaNames.add(areaName);
+            }
             MemberPassInfoResponse response =
                     new MemberPassInfoResponse(
                             pass.getId(),
                             pass.getMemberId(),
                             pass.getHospitalId(),
-                            accessAreas,
+                            areaNames,
                             pass.getVisitCategory(),
                             pass.getPatientId(),
                             pass.getStartAt(),
@@ -52,5 +45,19 @@ public class PassServiceImpl implements PassService {
             responses.add(response);
         }
         return responses;
+    }
+
+    private List<String> buildAreaName(String areaCode) {
+        String[] parts = areaCode.split("_");
+        List<String> areaName = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < parts.length; i++) {
+            if (i > 0) sb.append("_");
+            sb.append(parts[i]);
+            areaName.add(sb.toString());
+        }
+        // 구역 코드로 구역 이름 찾는 로직 추가 해야 함
+        return areaName;
     }
 }

@@ -19,11 +19,11 @@ public class Pass extends BaseEntity {
     @Column(name = "pass_id")
     private Long id;
 
-    @Column(name = "hospital_id", nullable = false)
-    private Long hospitalId;
-
     @Column(name = "member_id", nullable = false)
     private Long memberId;
+
+    @Column(name = "hospital_id", nullable = false)
+    private Long hospitalId;
 
     @Column(name = "start_at", nullable = false)
     private LocalDateTime startAt;
@@ -31,10 +31,10 @@ public class Pass extends BaseEntity {
     @Column(name = "expired_at", nullable = false)
     private LocalDateTime expiredAt;
 
+    @Column(name = "patient_id")
+    private Long patientId;
+
     @Column(name = "visit_category")
     @Enumerated(EnumType.STRING)
     private VisitCategory visitCategory;
-
-    @Column(name = "patient_id")
-    private Long patientId;
 }

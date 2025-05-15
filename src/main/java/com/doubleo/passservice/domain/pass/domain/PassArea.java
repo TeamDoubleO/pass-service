@@ -21,6 +21,6 @@ public class PassArea extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Pass pass;
 
-    @Column(name = "area_id", nullable = false)
-    private Long areaId;
+    @Column(name = "area_code", nullable = false)
+    private String areaCode;
 }
