@@ -9,7 +9,6 @@ import com.doubleo.passservice.domain.log.repository.IssuedLogAreaRepository;
 import com.doubleo.passservice.domain.log.repository.IssuedLogRepository;
 import com.doubleo.passservice.global.util.TenantValidator;
 import com.doubleo.passservice.grpc.client.AreaClient;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,8 +36,14 @@ public class LogServiceImpl implements LogService {
                 issuedLog -> {
                     List<String> areaCodes =
                             issuedLogAreaRepository.findAreaCodesByIssuedLog(issuedLog);
-                    List<List<String>> areaNames =
-                            areaCodes.stream().map(this::buildAreaName).toList();
+                    List<String> areaNames =
+                            areaCodes.stream()
+                                    .map(
+                                            code ->
+                                                    areaClient
+                                                            .getAreaFullNameByCode(code)
+                                                            .getAreaFullName())
+                                    .toList();
 
                     return new IssuedLogResponse(
                             issuedLog.getMemberId(),
@@ -59,24 +64,15 @@ public class LogServiceImpl implements LogService {
                 enterLog ->
                         new EnterLogResponse(
                                 enterLog.getAreaId(),
-                                areaClient.getAreaById(enterLog.getAreaId()).getAreaName(),
+                                areaClient
+                                        .getAreaFullNameByCode(
+                                                areaClient
+                                                        .getAreaById(enterLog.getAreaId())
+                                                        .getAreaCode())
+                                        .getAreaFullName(),
                                 enterLog.getMemberId(),
                                 enterLog.getMemberName(),
                                 enterLog.getPassId(),
                                 enterLog.getCreatedDt()));
-    }
-
-    private List<String> buildAreaName(String areaCode) {
-        String[] parts = areaCode.split("_");
-        List<String> areaName = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i > 0) sb.append("_");
-            sb.append(parts[i]);
-            areaName.add(sb.toString());
-        }
-        // 구역 코드로 구역 이름 찾는 로직 추가 해야 함
-        return areaName;
     }
 }

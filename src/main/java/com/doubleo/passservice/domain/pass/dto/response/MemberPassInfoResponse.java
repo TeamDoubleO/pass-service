@@ -8,7 +8,7 @@ public record MemberPassInfoResponse(
         Long passId,
         Long memberId,
         Long hospitalId,
-        List<List<String>> accessAreaNames,
+        List<String> accessAreaNames,
         VisitCategory visitCategory,
         Long patientId,
         LocalDateTime startedAt,
