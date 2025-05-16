@@ -8,7 +8,7 @@ public record IssuedLogResponse(
         Long memberId,
         String memberName,
         Long passId,
-        List<List<String>> areaNames,
+        List<String> areaNames,
         LocalDateTime startAt,
         LocalDateTime expiredAt,
         VisitCategory visitCategory) {}

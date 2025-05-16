@@ -27,9 +27,10 @@ public class PassServiceImpl implements PassService {
         List<MemberPassInfoResponse> responses = new ArrayList<>();
         for (Pass pass : passes) {
             List<PassArea> passAreas = passAreaRepository.findAllByPass(pass);
-            List<List<String>> areaNames = new ArrayList<>();
+            List<String> areaNames = new ArrayList<>();
             for (PassArea passArea : passAreas) {
-                List<String> areaName = buildAreaName(passArea.getAreaCode());
+                String areaName =
+                        areaClient.getAreaFullNameByCode(passArea.getAreaCode()).getAreaFullName();
                 areaNames.add(areaName);
             }
             MemberPassInfoResponse response =
@@ -45,19 +46,5 @@ public class PassServiceImpl implements PassService {
             responses.add(response);
         }
         return responses;
-    }
-
-    private List<String> buildAreaName(String areaCode) {
-        String[] parts = areaCode.split("_");
-        List<String> areaName = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i > 0) sb.append("_");
-            sb.append(parts[i]);
-            areaName.add(sb.toString());
-        }
-        // 구역 코드로 구역 이름 찾는 로직 추가 해야 함
-        return areaName;
     }
 }
