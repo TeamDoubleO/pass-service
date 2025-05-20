@@ -7,6 +7,6 @@ import java.time.LocalDateTime;
 
 public record PassCreateRequest(
         @Schema(description = "방문자 구분", example = "PATIENT") @NotBlank VisitCategory visitCategory,
-        @Schema(description = "환자 번호", example = "1") Long patientId,
+        @Schema(description = "환자 code", example = "A01010") String patientCode,
         @Schema(description = "시작 시간", example = "2007-12-03T10:15:30") @NotBlank
                 LocalDateTime startAt) {}

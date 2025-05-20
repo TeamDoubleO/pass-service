@@ -2,9 +2,7 @@ package com.doubleo.passservice.grpc.client;
 
 import com.doubleo.passservice.global.exception.CommonException;
 import com.doubleo.passservice.global.exception.errorcode.GrpcErrorCode;
-import com.doubleo.patientservice.domain.patient.grpc.server.PatientRequest;
-import com.doubleo.patientservice.domain.patient.grpc.server.PatientResponse;
-import com.doubleo.patientservice.domain.patient.grpc.server.PatientServiceGrpc;
+import com.doubleo.patientservice.domain.patient.grpc.server.*;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -21,6 +19,35 @@ public class PatientClient {
         try {
             PatientRequest request = PatientRequest.newBuilder().setPatientId(id).build();
             return blockingStub.getPatient(request);
+        } catch (StatusRuntimeException e) {
+            log.error(e.getMessage());
+            throw new CommonException(GrpcErrorCode.GRPC_SERVER_RESPONSE_FAILED);
+        }
+    }
+
+    public PatientResponse getPatientByPatientCode(String tenantId, String patientCode) {
+        try {
+            PatientByCode request =
+                    PatientByCode.newBuilder()
+                            .setTenantId(tenantId)
+                            .setPatientCode(patientCode)
+                            .build();
+            return blockingStub.getPatientByCode(request);
+        } catch (StatusRuntimeException e) {
+            log.error(e.getMessage());
+            throw new CommonException(GrpcErrorCode.GRPC_SERVER_RESPONSE_FAILED);
+        }
+    }
+
+    public PatientResponse getPatientByNameAndRegNo(String tenantId, String name, String regNo) {
+        try {
+            PatientByNameAndRegNoRequest request =
+                    PatientByNameAndRegNoRequest.newBuilder()
+                            .setTenantId(tenantId)
+                            .setPatientName(name)
+                            .setPatientRegNo(regNo)
+                            .build();
+            return blockingStub.getPatientByNameAndRegNo(request);
         } catch (StatusRuntimeException e) {
             log.error(e.getMessage());
             throw new CommonException(GrpcErrorCode.GRPC_SERVER_RESPONSE_FAILED);

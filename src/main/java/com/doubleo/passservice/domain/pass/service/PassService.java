@@ -16,6 +16,6 @@ public interface PassService {
             Long memberId,
             Long hospitalId,
             String tenantId,
-            Long patientId,
+            String patientCode,
             @NotBlank LocalDateTime startAt);
 }

@@ -68,6 +68,7 @@ public class PassServiceImpl implements PassService {
                             areaNames,
                             pass.getVisitCategory(),
                             pass.getPatientId(),
+                            pass.getIssuanceStatus(),
                             pass.getStartAt(),
                             pass.getExpiredAt());
             responses.add(response);
@@ -82,10 +83,23 @@ public class PassServiceImpl implements PassService {
         if (member == null) {
             throw new CommonException(MemberErrorCode.MEMBER_NOT_FOUND);
         }
-        // PatientResponse patient = patientClient.getPatientById(memberId);
-        // member 와 patient 비교
-        // 발급
-        return null;
+
+        PatientResponse patient =
+                patientClient.getPatientByNameAndRegNo(
+                        tenantId, member.getMemberName(), member.getMemberRegNo());
+        if (patient == null) {
+            throw new CommonException(PatientErrorCode.PATIENT_NOT_FOUND);
+        }
+
+        return createPass(
+                memberId,
+                hospitalId,
+                patient.getPatientId(),
+                tenantId,
+                startAt,
+                startAt.plusDays(1),
+                VisitCategory.PATIENT,
+                IssuanceStatus.ISSUED);
     }
 
     @Override
@@ -93,7 +107,7 @@ public class PassServiceImpl implements PassService {
             Long memberId,
             Long hospitalId,
             String tenantId,
-            Long patientId,
+            String patientCode,
             LocalDateTime startAt) {
         MemberResponse member = memberClient.getMemberById(memberId);
         if (member == null) {
@@ -102,6 +116,13 @@ public class PassServiceImpl implements PassService {
 
         String memberName = member.getMemberName();
         String memberContact = member.getMemberContact();
+
+        PatientResponse patient = patientClient.getPatientByPatientCode(tenantId, patientCode);
+        if (patient == null) {
+            throw new CommonException(PatientErrorCode.PATIENT_NOT_FOUND);
+        }
+        Long patientId = patient.getPatientId();
+
         List<GuardianResponse> guardians =
                 guardianClient.getPatientGuardianList(patientId).getGuardiansList();
         for (GuardianResponse guardian : guardians) {

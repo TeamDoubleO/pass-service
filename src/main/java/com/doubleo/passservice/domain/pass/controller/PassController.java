@@ -38,9 +38,13 @@ public class PassController {
                         memberId, hospitalId, tenantId, request.startAt());
             }
             case GUARDIAN -> {
-                if (request.patientId() != null) {
+                if (request.patientCode() != null) {
                     return passService.createGuardianPass(
-                            memberId, hospitalId, tenantId, request.patientId(), request.startAt());
+                            memberId,
+                            hospitalId,
+                            tenantId,
+                            request.patientCode(),
+                            request.startAt());
                 } else throw new CommonException(PassErrorCode.PATIENT_ID_REQUIRED_FOR_GUARDIAN);
             }
             default -> {
