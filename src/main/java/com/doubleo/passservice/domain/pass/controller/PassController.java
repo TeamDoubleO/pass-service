@@ -48,7 +48,7 @@ public class PassController {
                 } else throw new CommonException(PassErrorCode.PATIENT_ID_REQUIRED_FOR_GUARDIAN);
             }
             default -> {
-                return null;
+                throw new CommonException(PassErrorCode.VISIT_CATEGORY_REQUIRED_FOR_PASS);
             }
         }
     }

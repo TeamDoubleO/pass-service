@@ -70,6 +70,7 @@ public class Pass extends BaseEntity {
             Long hospitalId,
             LocalDateTime startAt,
             LocalDateTime expiredAt,
+            Long patientId,
             VisitCategory visitCategory,
             IssuanceStatus issuanceStatus) {
         return Pass.builder()
@@ -78,6 +79,7 @@ public class Pass extends BaseEntity {
                 .hospitalId(hospitalId)
                 .startAt(startAt)
                 .expiredAt(expiredAt)
+                .patientId(patientId)
                 .visitCategory(visitCategory)
                 .issuanceStatus(issuanceStatus)
                 .build();

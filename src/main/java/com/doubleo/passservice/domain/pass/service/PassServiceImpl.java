@@ -187,12 +187,14 @@ public class PassServiceImpl implements PassService {
         if (optionalPass.isPresent()) {
             Pass pass = optionalPass.get();
             MemberResponse member = memberClient.getMemberById(pass.getMemberId());
-            guardianClient.createGuardian(
-                    pass.getTenantId(),
-                    pass.getPatientId(),
-                    member.getMemberName(),
-                    member.getMemberContact());
-            pass.updateStatus(IssuanceStatus.ISSUED);
+            if (issuanceStatus == IssuanceStatus.ISSUED) {
+                guardianClient.createGuardian(
+                        pass.getTenantId(),
+                        pass.getPatientId(),
+                        member.getMemberName(),
+                        member.getMemberContact());
+            }
+            pass.updateStatus(issuanceStatus);
             passRepository.save(pass);
             return new PassCreateResponse(pass.getId());
         } else {
@@ -223,7 +225,14 @@ public class PassServiceImpl implements PassService {
 
         Pass pass =
                 Pass.createPass(
-                        tenantId, memberId, hospitalId, startAt, expiredAt, visitCategory, status);
+                        tenantId,
+                        memberId,
+                        hospitalId,
+                        startAt,
+                        expiredAt,
+                        patientId,
+                        visitCategory,
+                        status);
         pass = passRepository.save(pass);
 
         PassArea passArea = PassArea.createPassArea(tenantId, pass, areaCode);
