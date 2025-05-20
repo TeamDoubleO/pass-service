@@ -41,7 +41,7 @@ public class LogServiceImpl implements LogService {
                                     .map(
                                             code ->
                                                     areaClient
-                                                            .getAreaFullNameByCode(code)
+                                                            .getAreaFullNameByCode(tenantId, code)
                                                             .getAreaFullName())
                                     .toList();
 
@@ -66,6 +66,7 @@ public class LogServiceImpl implements LogService {
                                 enterLog.getAreaId(),
                                 areaClient
                                         .getAreaFullNameByCode(
+                                                tenantId,
                                                 areaClient
                                                         .getAreaById(enterLog.getAreaId())
                                                         .getAreaCode())

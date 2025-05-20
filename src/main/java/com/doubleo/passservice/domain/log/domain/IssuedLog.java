@@ -5,6 +5,7 @@ import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -40,4 +41,45 @@ public class IssuedLog extends BaseEntity {
     @Column(name = "visit_category")
     @Enumerated(EnumType.STRING)
     private VisitCategory visitCategory;
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private IssuedLog(
+            String tenantId,
+            Long memberId,
+            String memberName,
+            String memberContact,
+            Long passId,
+            LocalDateTime startAt,
+            LocalDateTime expiredAt,
+            VisitCategory visitCategory) {
+        this.tenantId = tenantId;
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.memberContact = memberContact;
+        this.passId = passId;
+        this.startAt = startAt;
+        this.expiredAt = expiredAt;
+        this.visitCategory = visitCategory;
+    }
+
+    public static IssuedLog createIssuedLog(
+            String tenantId,
+            Long memberId,
+            String memberName,
+            String memberContact,
+            Long passId,
+            LocalDateTime startAt,
+            LocalDateTime expiredAt,
+            VisitCategory visitCategory) {
+        return IssuedLog.builder()
+                .tenantId(tenantId)
+                .memberId(memberId)
+                .memberName(memberName)
+                .memberContact(memberContact)
+                .passId(passId)
+                .startAt(startAt)
+                .expiredAt(expiredAt)
+                .visitCategory(visitCategory)
+                .build();
+    }
 }
