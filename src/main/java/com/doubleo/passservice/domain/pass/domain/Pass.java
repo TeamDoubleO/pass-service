@@ -82,4 +82,8 @@ public class Pass extends BaseEntity {
                 .issuanceStatus(issuanceStatus)
                 .build();
     }
+
+    public void updateStatus(IssuanceStatus newStatus) {
+        this.issuanceStatus = newStatus;
+    }
 }

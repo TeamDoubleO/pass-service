@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum PassErrorCode implements BaseErrorCode {
     PATIENT_ID_REQUIRED_FOR_GUARDIAN(HttpStatus.BAD_REQUEST, "patient id가 필요합니다."),
-    ;
+    PASS_NOT_FOUND(HttpStatus.NOT_FOUND, "pass를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

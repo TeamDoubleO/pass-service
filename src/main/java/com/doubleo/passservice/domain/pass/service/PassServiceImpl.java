@@ -4,6 +4,7 @@ import com.doubleo.hospitalservice.domain.area.grpc.server.AreaResponse;
 import com.doubleo.memberservice.domain.member.grpc.server.MemberResponse;
 import com.doubleo.passservice.domain.log.domain.IssuedLog;
 import com.doubleo.passservice.domain.log.domain.IssuedLogArea;
+import com.doubleo.passservice.domain.log.dto.response.PendingPassResponse;
 import com.doubleo.passservice.domain.log.repository.IssuedLogAreaRepository;
 import com.doubleo.passservice.domain.log.repository.IssuedLogRepository;
 import com.doubleo.passservice.domain.pass.domain.Pass;
@@ -17,6 +18,7 @@ import com.doubleo.passservice.domain.pass.repository.PassRepository;
 import com.doubleo.passservice.global.exception.CommonException;
 import com.doubleo.passservice.global.exception.errorcode.AreaErrorCode;
 import com.doubleo.passservice.global.exception.errorcode.MemberErrorCode;
+import com.doubleo.passservice.global.exception.errorcode.PassErrorCode;
 import com.doubleo.passservice.global.exception.errorcode.PatientErrorCode;
 import com.doubleo.passservice.grpc.client.AreaClient;
 import com.doubleo.passservice.grpc.client.GuardianClient;
@@ -27,7 +29,10 @@ import com.doubleo.patientservice.domain.patient.grpc.server.PatientResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -148,6 +153,51 @@ public class PassServiceImpl implements PassService {
                 startAt.plusDays(1),
                 VisitCategory.GUARDIAN,
                 IssuanceStatus.PENDING);
+    }
+
+    @Override
+    public Page<PendingPassResponse> getPendingPassList(String tenantId, Pageable pageable) {
+        Page<Pass> passes =
+                passRepository.findAllByTenantIdAndIssuanceStatus(
+                        tenantId, IssuanceStatus.PENDING, pageable);
+        return passes.map(
+                pass -> {
+                    MemberResponse member = memberClient.getMemberById(pass.getMemberId());
+                    if (member == null) {
+                        throw new CommonException(MemberErrorCode.MEMBER_NOT_FOUND);
+                    }
+                    PatientResponse patient = patientClient.getPatientById(pass.getPatientId());
+                    if (patient == null) {
+                        throw new CommonException(PatientErrorCode.PATIENT_NOT_FOUND);
+                    }
+                    return new PendingPassResponse(
+                            pass.getId(),
+                            patient.getPatientCode(),
+                            member.getMemberName(),
+                            member.getMemberContact(),
+                            pass.getStartAt(),
+                            pass.getExpiredAt());
+                });
+    }
+
+    @Override
+    public PassCreateResponse createGuardianAndUpdatePassStatus(
+            Long passId, IssuanceStatus issuanceStatus) {
+        Optional<Pass> optionalPass = passRepository.findById(passId);
+        if (optionalPass.isPresent()) {
+            Pass pass = optionalPass.get();
+            MemberResponse member = memberClient.getMemberById(pass.getMemberId());
+            guardianClient.createGuardian(
+                    pass.getTenantId(),
+                    pass.getPatientId(),
+                    member.getMemberName(),
+                    member.getMemberContact());
+            pass.updateStatus(IssuanceStatus.ISSUED);
+            passRepository.save(pass);
+            return new PassCreateResponse(pass.getId());
+        } else {
+            throw new CommonException(PassErrorCode.PASS_NOT_FOUND);
+        }
     }
 
     private PassCreateResponse createPass(
