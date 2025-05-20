@@ -1,16 +1,28 @@
 package com.doubleo.passservice.domain.pass.service;
 
+import com.doubleo.hospitalservice.domain.area.grpc.server.AreaResponse;
 import com.doubleo.memberservice.domain.member.grpc.server.MemberResponse;
+import com.doubleo.passservice.domain.log.domain.IssuedLog;
+import com.doubleo.passservice.domain.log.domain.IssuedLogArea;
+import com.doubleo.passservice.domain.log.repository.IssuedLogAreaRepository;
+import com.doubleo.passservice.domain.log.repository.IssuedLogRepository;
 import com.doubleo.passservice.domain.pass.domain.Pass;
 import com.doubleo.passservice.domain.pass.domain.PassArea;
 import com.doubleo.passservice.domain.pass.dto.response.MemberPassInfoResponse;
 import com.doubleo.passservice.domain.pass.dto.response.PassCreateResponse;
+import com.doubleo.passservice.domain.pass.enums.IssuanceStatus;
+import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import com.doubleo.passservice.domain.pass.repository.PassAreaRepository;
 import com.doubleo.passservice.domain.pass.repository.PassRepository;
+import com.doubleo.passservice.global.exception.CommonException;
+import com.doubleo.passservice.global.exception.errorcode.AreaErrorCode;
+import com.doubleo.passservice.global.exception.errorcode.MemberErrorCode;
+import com.doubleo.passservice.global.exception.errorcode.PatientErrorCode;
 import com.doubleo.passservice.grpc.client.AreaClient;
 import com.doubleo.passservice.grpc.client.GuardianClient;
 import com.doubleo.passservice.grpc.client.MemberClient;
 import com.doubleo.passservice.grpc.client.PatientClient;
+import com.doubleo.patientservice.domain.guardian.grpc.server.GuardianResponse;
 import com.doubleo.patientservice.domain.patient.grpc.server.PatientResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,6 +38,8 @@ public class PassServiceImpl implements PassService {
 
     private final PassRepository passRepository;
     private final PassAreaRepository passAreaRepository;
+    private final IssuedLogRepository issuedLogRepository;
+    private final IssuedLogAreaRepository issuedLogAreaRepository;
     private final MemberClient memberClient;
     private final AreaClient areaClient;
     private final PatientClient patientClient;
@@ -65,7 +79,10 @@ public class PassServiceImpl implements PassService {
     public PassCreateResponse createPatientPass(
             Long memberId, Long hospitalId, String tenantId, LocalDateTime startAt) {
         MemberResponse member = memberClient.getMemberById(memberId);
-        PatientResponse patient = patientClient.getPatientById(memberId);
+        if (member == null) {
+            throw new CommonException(MemberErrorCode.MEMBER_NOT_FOUND);
+        }
+        // PatientResponse patient = patientClient.getPatientById(memberId);
         // member 와 patient 비교
         // 발급
         return null;
@@ -78,11 +95,115 @@ public class PassServiceImpl implements PassService {
             String tenantId,
             Long patientId,
             LocalDateTime startAt) {
-        return null;
+        MemberResponse member = memberClient.getMemberById(memberId);
+        if (member == null) {
+            throw new CommonException(MemberErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        String memberName = member.getMemberName();
+        String memberContact = member.getMemberContact();
+        List<GuardianResponse> guardians =
+                guardianClient.getPatientGuardianList(patientId).getGuardiansList();
+        for (GuardianResponse guardian : guardians) {
+            if (guardian.getGuardianName().equals(memberName)
+                    && guardian.getGuardianContact().equals(memberContact)) {
+                return createPass(
+                        memberId,
+                        hospitalId,
+                        patientId,
+                        tenantId,
+                        startAt,
+                        startAt.plusDays(1),
+                        VisitCategory.GUARDIAN,
+                        IssuanceStatus.ISSUED);
+            }
+        }
+        return createPass(
+                memberId,
+                hospitalId,
+                patientId,
+                tenantId,
+                startAt,
+                startAt.plusDays(1),
+                VisitCategory.GUARDIAN,
+                IssuanceStatus.PENDING);
     }
 
     private PassCreateResponse createPass(
-            Long memberId, Long hospitalId, String tenantId, LocalDateTime startAt) {
-        return null;
+            Long memberId,
+            Long hospitalId,
+            Long patientId,
+            String tenantId,
+            LocalDateTime startAt,
+            LocalDateTime expiredAt,
+            VisitCategory visitCategory,
+            IssuanceStatus status) {
+        PatientResponse patient = patientClient.getPatientById(patientId);
+        if (patient == null) {
+            throw new CommonException(PatientErrorCode.PATIENT_NOT_FOUND);
+        }
+
+        AreaResponse area = areaClient.getAreaById(patient.getAdmissionArea());
+        if (area == null) {
+            throw new CommonException(AreaErrorCode.AREA_NOT_FOUND);
+        }
+
+        String areaCode = area.getAreaCode();
+
+        Pass pass =
+                Pass.createPass(
+                        tenantId, memberId, hospitalId, startAt, expiredAt, visitCategory, status);
+        pass = passRepository.save(pass);
+
+        PassArea passArea = PassArea.createPassArea(tenantId, pass, areaCode);
+        passAreaRepository.save(passArea);
+
+        if (status == IssuanceStatus.ISSUED) {
+            MemberResponse member = memberClient.getMemberById(memberId);
+            List<String> areaCodes =
+                    passAreaRepository.findAllByPass(pass).stream()
+                            .map(PassArea::getAreaCode)
+                            .toList();
+            createIssuedLog(
+                    tenantId,
+                    memberId,
+                    member.getMemberName(),
+                    member.getMemberContact(),
+                    pass.getId(),
+                    startAt,
+                    expiredAt,
+                    visitCategory,
+                    areaCodes);
+        }
+        return new PassCreateResponse(pass.getId());
+    }
+
+    private void createIssuedLog(
+            String tenantId,
+            Long memberId,
+            String memberName,
+            String memberContact,
+            Long passId,
+            LocalDateTime startAt,
+            LocalDateTime expiredAt,
+            VisitCategory visitCategory,
+            List<String> areaCodes) {
+        IssuedLog issuedLog =
+                issuedLogRepository.save(
+                        IssuedLog.createIssuedLog(
+                                tenantId,
+                                memberId,
+                                memberName,
+                                memberContact,
+                                passId,
+                                startAt,
+                                expiredAt,
+                                visitCategory));
+        List<IssuedLogArea> logAreas =
+                areaCodes.stream()
+                        .map(code -> IssuedLogArea.createIssuedLogArea(tenantId, issuedLog, code))
+                        .toList();
+
+        issuedLogAreaRepository.saveAll(logAreas);
     }
 }

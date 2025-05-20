@@ -1,6 +1,7 @@
 package com.doubleo.passservice.domain.pass.domain;
 
 import com.doubleo.passservice.domain.common.model.BaseEntity;
+import com.doubleo.passservice.domain.pass.enums.IssuanceStatus;
 import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -39,6 +40,10 @@ public class Pass extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private VisitCategory visitCategory;
 
+    @Column(name = "issuance_status")
+    @Enumerated(EnumType.STRING)
+    private IssuanceStatus issuanceStatus;
+
     @Builder(access = AccessLevel.PRIVATE)
     private Pass(
             String tenantId,
@@ -47,7 +52,8 @@ public class Pass extends BaseEntity {
             LocalDateTime startAt,
             LocalDateTime expiredAt,
             Long patientId,
-            VisitCategory visitCategory) {
+            VisitCategory visitCategory,
+            IssuanceStatus issuanceStatus) {
         this.tenantId = tenantId;
         this.memberId = memberId;
         this.hospitalId = hospitalId;
@@ -55,6 +61,7 @@ public class Pass extends BaseEntity {
         this.expiredAt = expiredAt;
         this.patientId = patientId;
         this.visitCategory = visitCategory;
+        this.issuanceStatus = issuanceStatus;
     }
 
     public static Pass createPass(
@@ -62,13 +69,17 @@ public class Pass extends BaseEntity {
             Long memberId,
             Long hospitalId,
             LocalDateTime startAt,
-            LocalDateTime expiredAt) {
+            LocalDateTime expiredAt,
+            VisitCategory visitCategory,
+            IssuanceStatus issuanceStatus) {
         return Pass.builder()
                 .tenantId(tenantId)
                 .memberId(memberId)
                 .hospitalId(hospitalId)
                 .startAt(startAt)
                 .expiredAt(expiredAt)
+                .visitCategory(visitCategory)
+                .issuanceStatus(issuanceStatus)
                 .build();
     }
 }
