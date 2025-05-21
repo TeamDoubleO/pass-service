@@ -42,4 +42,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: sunwoo11/keywe_pass_service:latest
+          tags: |
+            sunwoo11/keywe_pass_service:latest
+            sunwoo11/keywe_pass_service:dev
