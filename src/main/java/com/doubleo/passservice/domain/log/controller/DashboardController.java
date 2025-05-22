@@ -1,6 +1,7 @@
 package com.doubleo.passservice.domain.log.controller;
 
 import com.doubleo.passservice.domain.log.dto.response.HourlyEntryResponse;
+import com.doubleo.passservice.domain.log.dto.response.SummaryResponse;
 import com.doubleo.passservice.domain.log.service.DashboardService;
 import com.doubleo.passservice.global.util.TenantValidator;
 import java.util.List;
@@ -20,5 +21,10 @@ public class DashboardController {
     @GetMapping("/hourly")
     public List<HourlyEntryResponse> hourlyEntryListGet() {
         return dashboardService.getHourlyEntryList();
+    }
+
+    @GetMapping("/summary")
+    public List<SummaryResponse> getTodaySummary() {
+        return (List<SummaryResponse>) dashboardService.getTodaySummary();
     }
 }

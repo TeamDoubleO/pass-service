@@ -5,4 +5,6 @@ import java.util.List;
 
 public interface DashboardService {
     List<HourlyEntryResponse> getHourlyEntryList();
+
+    Object getTodaySummary();
 }
