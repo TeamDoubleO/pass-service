@@ -89,8 +89,16 @@ public class DashboardServiceImpl implements DashboardService {
             }
         }
 
+        // 당일 입퇴장 수 계산을 위한 조회 범위
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
         LocalDateTime now = LocalDateTime.now();
+
+        // 잔류 인원 계산용 - 최근 7일간 로그 전체 조회
+        LocalDateTime baseStart = LocalDate.now().minusDays(7).atStartOfDay();
+        List<BuildingEnterLog> fullLogs =
+                buildingEnterLogRepository.findAllByTenantIdAndCreatedDtBetween(
+                        tenantId, baseStart, now);
+
         List<BuildingEnterLog> logs =
                 buildingEnterLogRepository.findAllByTenantIdAndCreatedDtBetween(
                         tenantId, startOfDay, now);
@@ -125,13 +133,15 @@ public class DashboardServiceImpl implements DashboardService {
             passIdByMember.put(memberId, passId);
         }
 
-        for (Map.Entry<Long, Direction> entry : latestDirectionByMember.entrySet()) {
-            if (entry.getValue() == Direction.IN) {
-                Long passId = passIdByMember.get(entry.getKey());
-                IssuedLog issuedLog = issuedLogRepository.findByPassId(passId).orElse(null);
-                if (issuedLog != null && issuedLog.getVisitCategory() != null) {
-                    remainingMap.merge(issuedLog.getVisitCategory(), 1, Integer::sum);
-                }
+        Map<Long, BuildingEnterLog> latestLogByMember = new HashMap<>();
+        for (BuildingEnterLog log : fullLogs) {
+            Long memberId = log.getMemberId();
+            if (!latestLogByMember.containsKey(memberId)
+                    || latestLogByMember
+                            .get(memberId)
+                            .getCreatedDt()
+                            .isBefore(log.getCreatedDt())) {
+                latestLogByMember.put(memberId, log);
             }
         }
 
