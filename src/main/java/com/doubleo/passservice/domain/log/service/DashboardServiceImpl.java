@@ -45,12 +45,11 @@ public class DashboardServiceImpl implements DashboardService {
                 int count = buildingEnterLogRepository.countInLogsAtHour(hour, hour.plusHours(1));
                 redisTemplate
                         .opsForValue()
-                        .set(redisKey, String.valueOf(count), Duration.ofSeconds(10)); // TTL 설정
+                        .set(redisKey, String.valueOf(count), Duration.ofSeconds(10));
                 total = count;
             }
 
-            hourlyList.add(
-                    new HourlyEntryResponse(String.format("%02d시", hour.getHour()), total, hour));
+            hourlyList.add(new HourlyEntryResponse(hour.getHour(), total, hour));
         }
 
         return hourlyList;

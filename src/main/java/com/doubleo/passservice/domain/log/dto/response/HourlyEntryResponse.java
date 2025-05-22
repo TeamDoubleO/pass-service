@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public record HourlyEntryResponse(
-        String hour,
+        int hour,
         int total,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
                 LocalDateTime timestamp)
