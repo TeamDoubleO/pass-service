@@ -20,3 +20,4 @@ spring:
       - eureka
       - actuator
       - grpc
+      - redis
