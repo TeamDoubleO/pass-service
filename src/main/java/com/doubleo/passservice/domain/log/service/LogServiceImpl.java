@@ -7,6 +7,7 @@ import com.doubleo.passservice.domain.log.dto.response.IssuedLogResponse;
 import com.doubleo.passservice.domain.log.repository.EnterLogRepository;
 import com.doubleo.passservice.domain.log.repository.IssuedLogAreaRepository;
 import com.doubleo.passservice.domain.log.repository.IssuedLogRepository;
+import com.doubleo.passservice.domain.pass.dto.AreaInfo;
 import com.doubleo.passservice.global.util.TenantValidator;
 import com.doubleo.passservice.grpc.client.AreaClient;
 import java.util.List;
@@ -36,20 +37,24 @@ public class LogServiceImpl implements LogService {
                 issuedLog -> {
                     List<String> areaCodes =
                             issuedLogAreaRepository.findAreaCodesByIssuedLog(issuedLog);
-                    List<String> areaNames =
+                    List<AreaInfo> areas =
                             areaCodes.stream()
                                     .map(
-                                            code ->
-                                                    areaClient
-                                                            .getAreaFullNameByCode(code)
-                                                            .getAreaFullName())
+                                            code -> {
+                                                String areaName =
+                                                        areaClient
+                                                                .getAreaFullNameByCode(
+                                                                        tenantId, code)
+                                                                .getAreaFullName();
+                                                return new AreaInfo(code, areaName);
+                                            })
                                     .toList();
 
                     return new IssuedLogResponse(
                             issuedLog.getMemberId(),
                             issuedLog.getMemberName(),
                             issuedLog.getPassId(),
-                            areaNames,
+                            areas,
                             issuedLog.getStartAt(),
                             issuedLog.getExpiredAt(),
                             issuedLog.getVisitCategory());
@@ -66,6 +71,7 @@ public class LogServiceImpl implements LogService {
                                 enterLog.getAreaId(),
                                 areaClient
                                         .getAreaFullNameByCode(
+                                                tenantId,
                                                 areaClient
                                                         .getAreaById(enterLog.getAreaId())
                                                         .getAreaCode())

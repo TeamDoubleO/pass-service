@@ -1,5 +1,6 @@
 package com.doubleo.passservice.domain.pass.dto.response;
 
+import com.doubleo.passservice.domain.pass.enums.IssuanceStatus;
 import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,5 +12,6 @@ public record MemberPassInfoResponse(
         List<String> accessAreaNames,
         VisitCategory visitCategory,
         Long patientId,
+        IssuanceStatus issuanceStatus,
         LocalDateTime startedAt,
         LocalDateTime expiredAt) {}

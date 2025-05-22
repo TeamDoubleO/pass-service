@@ -3,6 +3,7 @@ package com.doubleo.passservice.domain.log.domain;
 import com.doubleo.passservice.domain.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,4 +29,23 @@ public class EnterLog extends BaseEntity {
 
     @Column(name = "pass_id", nullable = false)
     private Long passId;
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private EnterLog(String tenantId, Long areaId, Long memberId, String memberName, Long passId) {
+        this.tenantId = tenantId;
+        this.areaId = areaId;
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.passId = passId;
+    }
+
+    public static EnterLog createEnterLog(
+            String tenantId, Long areaId, Long memberId, String memberName, Long passId) {
+        return EnterLog.builder()
+                .tenantId(tenantId)
+                .areaId(areaId)
+                .memberId(memberId)
+                .passId(passId)
+                .build();
+    }
 }
