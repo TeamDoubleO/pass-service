@@ -1,10 +1,12 @@
 package com.doubleo.passservice.domain.pass.domain;
 
 import com.doubleo.passservice.domain.common.model.BaseEntity;
+import com.doubleo.passservice.domain.pass.enums.IssuanceStatus;
 import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,4 +39,53 @@ public class Pass extends BaseEntity {
     @Column(name = "visit_category")
     @Enumerated(EnumType.STRING)
     private VisitCategory visitCategory;
+
+    @Column(name = "issuance_status")
+    @Enumerated(EnumType.STRING)
+    private IssuanceStatus issuanceStatus;
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private Pass(
+            String tenantId,
+            Long memberId,
+            Long hospitalId,
+            LocalDateTime startAt,
+            LocalDateTime expiredAt,
+            Long patientId,
+            VisitCategory visitCategory,
+            IssuanceStatus issuanceStatus) {
+        this.tenantId = tenantId;
+        this.memberId = memberId;
+        this.hospitalId = hospitalId;
+        this.startAt = startAt;
+        this.expiredAt = expiredAt;
+        this.patientId = patientId;
+        this.visitCategory = visitCategory;
+        this.issuanceStatus = issuanceStatus;
+    }
+
+    public static Pass createPass(
+            String tenantId,
+            Long memberId,
+            Long hospitalId,
+            LocalDateTime startAt,
+            LocalDateTime expiredAt,
+            Long patientId,
+            VisitCategory visitCategory,
+            IssuanceStatus issuanceStatus) {
+        return Pass.builder()
+                .tenantId(tenantId)
+                .memberId(memberId)
+                .hospitalId(hospitalId)
+                .startAt(startAt)
+                .expiredAt(expiredAt)
+                .patientId(patientId)
+                .visitCategory(visitCategory)
+                .issuanceStatus(issuanceStatus)
+                .build();
+    }
+
+    public void updateStatus(IssuanceStatus newStatus) {
+        this.issuanceStatus = newStatus;
+    }
 }

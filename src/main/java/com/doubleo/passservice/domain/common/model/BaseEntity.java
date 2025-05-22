@@ -21,7 +21,7 @@ public abstract class BaseEntity implements Tenant {
     @LastModifiedDate private LocalDateTime updatedDt;
 
     @Column(name = "tenant_id", nullable = false)
-    private String tenantId;
+    protected String tenantId;
 
     @Override
     public String getTenantId() {

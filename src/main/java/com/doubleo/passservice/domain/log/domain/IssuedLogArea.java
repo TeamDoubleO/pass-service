@@ -3,6 +3,7 @@ package com.doubleo.passservice.domain.log.domain;
 import com.doubleo.passservice.domain.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,20 @@ public class IssuedLogArea extends BaseEntity {
 
     @Column(name = "area_code", nullable = false)
     private String areaCode;
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private IssuedLogArea(String tenantId, IssuedLog issuedLog, String areaCode) {
+        this.tenantId = tenantId;
+        this.issuedLog = issuedLog;
+        this.areaCode = areaCode;
+    }
+
+    public static IssuedLogArea createIssuedLogArea(
+            String tenantId, IssuedLog issuedLog, String areaCode) {
+        return IssuedLogArea.builder()
+                .tenantId(tenantId)
+                .issuedLog(issuedLog)
+                .areaCode(areaCode)
+                .build();
+    }
 }
