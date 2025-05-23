@@ -28,6 +28,9 @@ public class EntryStatsDaily extends BaseEntity {
     @Column(name = "entry_stats_daily_building_id", nullable = false)
     private String buildingId;
 
+    @Column(name = "entry_stats_daily_building_name", nullable = false)
+    private String buildingName;
+
     @Column(name = "entry_stats_daily_visit_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private VisitCategory visitCategory;
