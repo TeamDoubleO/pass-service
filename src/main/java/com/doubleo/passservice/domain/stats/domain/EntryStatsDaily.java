@@ -34,7 +34,4 @@ public class EntryStatsDaily extends BaseEntity {
 
     @Column(name = "entry_stats_daily_entered", nullable = false)
     private Long entered;
-
-    @Column(name = "entry_stats_daily_exited", nullable = false)
-    private Long exited;
 }
