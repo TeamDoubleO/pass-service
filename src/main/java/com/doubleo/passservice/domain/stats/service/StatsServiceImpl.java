@@ -1,6 +1,6 @@
 package com.doubleo.passservice.domain.stats.service;
 
-import com.doubleo.passservice.domain.stats.dto.response.DailyStatsInfoResponse;
+import com.doubleo.passservice.domain.stats.dto.response.DailyStatsListInfoResponse;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsDailyRepository;
 import com.doubleo.passservice.global.util.TenantValidator;
 import java.time.LocalDate;
@@ -18,7 +18,7 @@ public class StatsServiceImpl implements StatsService {
     private final TenantValidator tenantValidator;
 
     @Override
-    public List<DailyStatsInfoResponse> getDailyPeriodStatsList() {
+    public List<DailyStatsListInfoResponse> getDailyPeriodStatsList() {
 
         String tenantId = tenantValidator.getTenantId();
 
