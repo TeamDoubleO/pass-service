@@ -1,6 +1,6 @@
 package com.doubleo.passservice.domain.stats.controller;
 
-import com.doubleo.passservice.domain.stats.dto.response.DailyStatInfoResponse;
+import com.doubleo.passservice.domain.stats.dto.response.DailyStatsInfoResponse;
 import com.doubleo.passservice.domain.stats.service.StatsService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class EntryStatsController {
     private final StatsService statsService;
 
     @GetMapping("/period/daily")
-    public List<DailyStatInfoResponse> dailyPeriodStatListGet() {
-        return statsService.getDailyPeriodStatList();
+    public List<DailyStatsInfoResponse> dailyPeriodStatsListGet() {
+        return statsService.getDailyPeriodStatsList();
     }
 }
