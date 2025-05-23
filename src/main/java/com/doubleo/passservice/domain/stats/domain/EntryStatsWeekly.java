@@ -1,3 +1,32 @@
 package com.doubleo.passservice.domain.stats.domain;
 
-public class EntryStatsWeekly {}
+import com.doubleo.passservice.domain.common.model.BaseEntity;
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(
+        name = "entry_stats_weekly",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"tenant_id", "start_date", "end_date"})
+        })
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class EntryStatsWeekly extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "entry_stats_weekly_start_date", nullable = false)
+    private LocalDate startDate;
+
+    @Column(name = "entry_stats_weekly_end_date", nullable = false)
+    private LocalDate endDate;
+
+    @Column(name = "entry_stats_weekly_entered", nullable = false)
+    private Long entered;
+}
