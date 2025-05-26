@@ -1,10 +1,7 @@
 package com.doubleo.passservice.domain.stats.service;
 
 import com.doubleo.passservice.domain.stats.domain.EntryStatsDaily;
-import com.doubleo.passservice.domain.stats.dto.response.DailyStatsInfoListResponse;
-import com.doubleo.passservice.domain.stats.dto.response.LastWeekCategoryStatsInfoListResponse;
-import com.doubleo.passservice.domain.stats.dto.response.MonthlyStatsInfoListResponse;
-import com.doubleo.passservice.domain.stats.dto.response.WeeklyStatsInfoListResponse;
+import com.doubleo.passservice.domain.stats.dto.response.*;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsDailyRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsMonthlyRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsWeeklyRepository;
@@ -103,6 +100,43 @@ public class StatsServiceImpl implements StatsService {
                                                             day,
                                                             catEntry.getKey().name(),
                                                             catEntry.getValue()));
+                        })
+                .collect(Collectors.toList());
+    }
+
+    public List<LastWeekBuildingStatsInfoListResponse> getLastWeekBuildingStats() {
+        String tenantId = tenantValidator.getTenantId();
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.minusDays(7);
+        LocalDate endDate = today;
+
+        List<EntryStatsDaily> stats =
+                entryStatsDailyRepository.findLastWeekStats(tenantId, startDate, endDate);
+
+        return stats.stream()
+                .collect(
+                        Collectors.groupingBy(
+                                EntryStatsDaily::getDate,
+                                Collectors.groupingBy(
+                                        EntryStatsDaily::getBuildingName,
+                                        Collectors.summingLong(EntryStatsDaily::getEntered))))
+                .entrySet()
+                .stream()
+                .flatMap(
+                        dateEntry -> {
+                            LocalDate date = dateEntry.getKey();
+                            String day =
+                                    date.getDayOfWeek()
+                                            .getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+
+                            return dateEntry.getValue().entrySet().stream()
+                                    .map(
+                                            buildingEntry ->
+                                                    new LastWeekBuildingStatsInfoListResponse(
+                                                            date,
+                                                            day,
+                                                            buildingEntry.getKey(),
+                                                            buildingEntry.getValue()));
                         })
                 .collect(Collectors.toList());
     }
