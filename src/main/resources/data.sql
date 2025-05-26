@@ -293,3 +293,38 @@ INSERT INTO entry_stats_daily (tenant_id, entry_stats_daily_date, entry_stats_da
     ('SEO25NE01', '2025-05-08', 'A', '병동A', 'GUARDIAN', 113),
     ('SEO25NE01', '2025-05-08', 'B', '병동B', 'PATIENT', 115),
     ('SEO25NE01', '2025-05-08', 'B', '병동B', 'GUARDIAN', 118);
+
+INSERT INTO entry_stats_weekly (tenant_id, entry_stats_weekly_start_date, entry_stats_weekly_end_date, entry_stats_weekly_entered) VALUES
+    ('SEO25NE01', '2025-03-10', '2025-03-16', 480),
+    ('SEO25NE01', '2025-03-17', '2025-03-23', 505),
+    ('SEO25NE01', '2025-03-24', '2025-03-30', 530),
+    ('SEO25NE01', '2025-03-31', '2025-04-06', 555),
+    ('SEO25NE01', '2025-04-07', '2025-04-13', 580),
+    ('SEO25NE01', '2025-04-14', '2025-04-20', 480),
+    ('SEO25NE01', '2025-04-21', '2025-04-27', 505),
+    ('SEO25NE01', '2025-04-28', '2025-05-04', 530),
+    ('SEO25NE01', '2025-05-05', '2025-05-11', 555),
+    ('SEO25NE01', '2025-05-12', '2025-05-18', 580);
+
+
+INSERT INTO entry_stats_monthly (tenant_id, entry_stats_monthly_year, entry_stats_monthly_month, entry_stats_monthly_entered) VALUES
+    ('SEO25NE01', 2024, 2, 2000),
+    ('SEO25NE01', 2024, 3, 2150),
+    ('SEO25NE01', 2024, 4, 2300),
+    ('SEO25NE01', 2024, 5, 2450),
+    ('SEO25NE01', 2024, 6, 2000),
+    ('SEO25NE01', 2024, 7, 2150),
+    ('SEO25NE01', 2024, 8, 2300),
+    ('SEO25NE01', 2024, 9, 2450),
+    ('SEO25NE01', 2024, 10, 2600),
+    ('SEO25NE01', 2024, 11, 2750),
+    ('SEO25NE01', 2024, 12, 2900),
+    ('SEO25NE01', 2025, 1, 3050),
+    ('SEO25NE01', 2025, 2, 3200),
+    ('SEO25NE01', 2025, 3, 3350),
+    ('SEO25NE01', 2025, 4, 3500),
+    ('SEO25NE01', 2025, 5, 3650),
+    ('SEO25NE01', 2025, 6, 3200),
+    ('SEO25NE01', 2025, 7, 3350),
+    ('SEO25NE01', 2025, 8, 3500),
+    ('SEO25NE01', 2025, 9, 3650);
