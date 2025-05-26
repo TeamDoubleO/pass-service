@@ -2,7 +2,7 @@ package com.doubleo.passservice.domain.stats.service;
 
 import com.doubleo.passservice.domain.stats.domain.EntryStatsDaily;
 import com.doubleo.passservice.domain.stats.dto.response.DailyStatsInfoListResponse;
-import com.doubleo.passservice.domain.stats.dto.response.LastWeekCateroryStatsInfoListResponse;
+import com.doubleo.passservice.domain.stats.dto.response.LastWeekCategoryStatsInfoListResponse;
 import com.doubleo.passservice.domain.stats.dto.response.MonthlyStatsInfoListResponse;
 import com.doubleo.passservice.domain.stats.dto.response.WeeklyStatsInfoListResponse;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsDailyRepository;
@@ -71,7 +71,7 @@ public class StatsServiceImpl implements StatsService {
                 .toList();
     }
 
-    public List<LastWeekCateroryStatsInfoListResponse> getLastWeekCategoryStats() {
+    public List<LastWeekCategoryStatsInfoListResponse> getLastWeekCategoryStats() {
         String tenantId = tenantValidator.getTenantId();
         LocalDate today = LocalDate.now();
         LocalDate startDate = today.minusDays(7);
@@ -98,7 +98,7 @@ public class StatsServiceImpl implements StatsService {
                             return entry.getValue().entrySet().stream()
                                     .map(
                                             catEntry ->
-                                                    new LastWeekCateroryStatsInfoListResponse(
+                                                    new LastWeekCategoryStatsInfoListResponse(
                                                             date,
                                                             day,
                                                             catEntry.getKey().name(),
