@@ -26,7 +26,7 @@ public class EntryStatsDaily extends BaseEntity {
     private LocalDate date;
 
     @Column(name = "entry_stats_daily_building_id", nullable = false)
-    private String buildingId;
+    private Long buildingId;
 
     @Column(name = "entry_stats_daily_building_name", nullable = false)
     private String buildingName;

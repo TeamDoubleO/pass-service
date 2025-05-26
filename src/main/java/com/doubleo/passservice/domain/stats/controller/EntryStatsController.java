@@ -1,9 +1,6 @@
 package com.doubleo.passservice.domain.stats.controller;
 
-import com.doubleo.passservice.domain.stats.dto.response.DailyStatsInfoListResponse;
-import com.doubleo.passservice.domain.stats.dto.response.LastWeekCategoryStatsInfoListResponse;
-import com.doubleo.passservice.domain.stats.dto.response.MonthlyStatsInfoListResponse;
-import com.doubleo.passservice.domain.stats.dto.response.WeeklyStatsInfoListResponse;
+import com.doubleo.passservice.domain.stats.dto.response.*;
 import com.doubleo.passservice.domain.stats.service.StatsService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +33,10 @@ public class EntryStatsController {
     @GetMapping("/category")
     public List<LastWeekCategoryStatsInfoListResponse> lastWeekCategoryStatsListGet() {
         return statsService.getLastWeekCategoryStats();
+    }
+
+    @GetMapping("/building")
+    public List<LastWeekBuildingStatsInfoListResponse> lastWeekBuilidngStatsListGet() {
+        return statsService.getLastWeekBuildingStats();
     }
 }
