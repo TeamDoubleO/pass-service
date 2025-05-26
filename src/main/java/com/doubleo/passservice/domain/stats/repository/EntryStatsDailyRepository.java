@@ -20,4 +20,16 @@ public interface EntryStatsDailyRepository extends JpaRepository<EntryStatsDaily
 """)
     List<DailyStatsInfoListResponse> findDailyEnteredSumByDate(
             String tenantId, LocalDate today, LocalDate startDate);
+
+    @Query(
+            """
+    SELECT e
+    FROM EntryStatsDaily e
+    WHERE e.tenantId = :tenantId
+      AND e.date >= :startDate
+      AND e.date < :endDate
+    ORDER BY e.date DESC
+""")
+    List<EntryStatsDaily> findLastWeekStats(
+            String tenantId, LocalDate startDate, LocalDate endDate);
 }
