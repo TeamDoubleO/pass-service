@@ -156,6 +156,11 @@ public class PassServiceImpl implements PassService {
     }
 
     @Override
+    public void deletePass(Long passId) {
+        passRepository.deleteById(passId);
+    }
+
+    @Override
     public Page<PendingPassResponse> getPendingPassList(String tenantId, Pageable pageable) {
         Page<Pass> passes =
                 passRepository.findAllByTenantIdAndIssuanceStatus(

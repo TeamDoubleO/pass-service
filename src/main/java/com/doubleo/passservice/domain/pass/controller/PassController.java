@@ -1,6 +1,7 @@
 package com.doubleo.passservice.domain.pass.controller;
 
 import com.doubleo.passservice.domain.pass.dto.request.PassCreateRequest;
+import com.doubleo.passservice.domain.pass.dto.request.PassDeleteRequest;
 import com.doubleo.passservice.domain.pass.dto.response.MemberPassInfoResponse;
 import com.doubleo.passservice.domain.pass.dto.response.PassCreateResponse;
 import com.doubleo.passservice.domain.pass.service.PassService;
@@ -9,6 +10,7 @@ import com.doubleo.passservice.global.exception.errorcode.PassErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -51,5 +53,13 @@ public class PassController {
                 throw new CommonException(PassErrorCode.VISIT_CATEGORY_REQUIRED_FOR_PASS);
             }
         }
+    }
+
+    @Operation(summary = "Pass delete API", description = "Pass 삭제 API")
+    @DeleteMapping
+    public ResponseEntity<Void> PassDelete(
+            @RequestHeader("X-Member-Id") Long memberId, @RequestBody PassDeleteRequest request) {
+        passService.deletePass(request.passId());
+        return ResponseEntity.ok().build();
     }
 }

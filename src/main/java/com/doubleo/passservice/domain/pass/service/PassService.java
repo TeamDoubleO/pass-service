@@ -23,6 +23,8 @@ public interface PassService {
             String patientCode,
             @NotNull LocalDateTime startAt);
 
+    void deletePass(Long passId);
+
     Page<PendingPassResponse> getPendingPassList(String tenantId, Pageable pageable);
 
     PassCreateResponse createGuardianAndUpdatePassStatus(
