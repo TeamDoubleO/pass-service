@@ -84,6 +84,7 @@ public class PassServiceImpl implements PassService {
     @Override
     public PassCreateResponse createPatientPass(
             Long memberId, Long hospitalId, String tenantId, LocalDateTime startAt) {
+
         MemberResponse member = memberClient.getMemberById(memberId);
         if (member == null) {
             throw new CommonException(MemberErrorCode.MEMBER_NOT_FOUND);
@@ -153,6 +154,11 @@ public class PassServiceImpl implements PassService {
                 startAt.plusDays(1),
                 VisitCategory.GUARDIAN,
                 IssuanceStatus.PENDING);
+    }
+
+    @Override
+    public void deletePass(Long passId) {
+        passRepository.deleteById(passId);
     }
 
     @Override
