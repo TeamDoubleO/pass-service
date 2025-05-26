@@ -305,3 +305,26 @@ INSERT INTO entry_stats_weekly (tenant_id, entry_stats_weekly_start_date, entry_
     ('SEO25NE01', '2025-04-28', '2025-05-04', 530),
     ('SEO25NE01', '2025-05-05', '2025-05-11', 555),
     ('SEO25NE01', '2025-05-12', '2025-05-18', 580);
+
+
+INSERT INTO entry_stats_monthly (tenant_id, entry_stats_monthly_year, entry_stats_monthly_month, entry_stats_monthly_entered) VALUES
+    ('SEO25NE01', 2024, 2, 2000),
+    ('SEO25NE01', 2024, 3, 2150),
+    ('SEO25NE01', 2024, 4, 2300),
+    ('SEO25NE01', 2024, 5, 2450),
+    ('SEO25NE01', 2024, 6, 2000),
+    ('SEO25NE01', 2024, 7, 2150),
+    ('SEO25NE01', 2024, 8, 2300),
+    ('SEO25NE01', 2024, 9, 2450),
+    ('SEO25NE01', 2024, 10, 2600),
+    ('SEO25NE01', 2024, 11, 2750),
+    ('SEO25NE01', 2024, 12, 2900),
+    ('SEO25NE01', 2025, 1, 3050),
+    ('SEO25NE01', 2025, 2, 3200),
+    ('SEO25NE01', 2025, 3, 3350),
+    ('SEO25NE01', 2025, 4, 3500),
+    ('SEO25NE01', 2025, 5, 3650),
+    ('SEO25NE01', 2025, 6, 3200),
+    ('SEO25NE01', 2025, 7, 3350),
+    ('SEO25NE01', 2025, 8, 3500),
+    ('SEO25NE01', 2025, 9, 3650);

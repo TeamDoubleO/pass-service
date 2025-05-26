@@ -1,6 +1,7 @@
 package com.doubleo.passservice.domain.stats.controller;
 
 import com.doubleo.passservice.domain.stats.dto.response.DailyStatsInfoListResponse;
+import com.doubleo.passservice.domain.stats.dto.response.MonthlyStatsInfoListResponse;
 import com.doubleo.passservice.domain.stats.dto.response.WeeklyStatsInfoListResponse;
 import com.doubleo.passservice.domain.stats.service.StatsService;
 import java.util.List;
@@ -24,5 +25,10 @@ public class EntryStatsController {
     @GetMapping("/period/weekly")
     public List<WeeklyStatsInfoListResponse> weeklyPeriodStatsListGet() {
         return statsService.getLastWeeksStatsList();
+    }
+
+    @GetMapping("period/monthly")
+    public List<MonthlyStatsInfoListResponse> monthlyPeriodStatsListGet() {
+        return statsService.getRecentMonthlyStatsList();
     }
 }

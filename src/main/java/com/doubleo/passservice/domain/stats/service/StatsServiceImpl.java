@@ -1,8 +1,10 @@
 package com.doubleo.passservice.domain.stats.service;
 
 import com.doubleo.passservice.domain.stats.dto.response.DailyStatsInfoListResponse;
+import com.doubleo.passservice.domain.stats.dto.response.MonthlyStatsInfoListResponse;
 import com.doubleo.passservice.domain.stats.dto.response.WeeklyStatsInfoListResponse;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsDailyRepository;
+import com.doubleo.passservice.domain.stats.repository.EntryStatsMonthlyRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsWeeklyRepository;
 import com.doubleo.passservice.global.util.TenantValidator;
 import java.time.DayOfWeek;
@@ -19,6 +21,7 @@ public class StatsServiceImpl implements StatsService {
 
     private final EntryStatsDailyRepository entryStatsDailyRepository;
     private final EntryStatsWeeklyRepository entryStatsWeeklyRepository;
+    private final EntryStatsMonthlyRepository entryStatsMonthlyRepository;
     private final TenantValidator tenantValidator;
 
     @Override
@@ -46,6 +49,20 @@ public class StatsServiceImpl implements StatsService {
                                         weekly.getStartDate(),
                                         weekly.getEndDate(),
                                         weekly.getEntered()))
+                .toList();
+    }
+
+    public List<MonthlyStatsInfoListResponse> getRecentMonthlyStatsList() {
+        LocalDate now = LocalDate.now();
+        return entryStatsMonthlyRepository
+                .findUpToPreviousMonth(
+                        tenantValidator.getTenantId(), now.getYear(), now.getMonthValue())
+                .stream()
+                .limit(12)
+                .map(
+                        e ->
+                                MonthlyStatsInfoListResponse.of(
+                                        e.getYear(), e.getMonth(), e.getEntered()))
                 .toList();
     }
 }
