@@ -1,7 +1,7 @@
 package com.doubleo.passservice.domain.stats.service;
 
-import com.doubleo.passservice.domain.stats.dto.response.DailyStatsListInfoResponse;
-import com.doubleo.passservice.domain.stats.dto.response.WeeklyStatsListResponse;
+import com.doubleo.passservice.domain.stats.dto.response.DailyStatsInfoListResponse;
+import com.doubleo.passservice.domain.stats.dto.response.WeeklyStatsInfoListResponse;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsDailyRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsWeeklyRepository;
 import com.doubleo.passservice.global.util.TenantValidator;
@@ -22,7 +22,7 @@ public class StatsServiceImpl implements StatsService {
     private final TenantValidator tenantValidator;
 
     @Override
-    public List<DailyStatsListInfoResponse> getDailyPeriodStatsList() {
+    public List<DailyStatsInfoListResponse> getDailyPeriodStatsList() {
 
         String tenantId = tenantValidator.getTenantId();
 
@@ -33,7 +33,7 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
-    public List<WeeklyStatsListResponse> getLastWeeksStats() {
+    public List<WeeklyStatsInfoListResponse> getLastWeeksStatsList() {
         String tenantId = tenantValidator.getTenantId();
         LocalDate thisMonday = LocalDate.now().with(DayOfWeek.MONDAY);
         LocalDate endDate = thisMonday.minusDays(1);
@@ -42,7 +42,7 @@ public class StatsServiceImpl implements StatsService {
         return entryStatsWeeklyRepository.findLastWeeks(tenantId, startDate, endDate).stream()
                 .map(
                         weekly ->
-                                WeeklyStatsListResponse.of(
+                                WeeklyStatsInfoListResponse.of(
                                         weekly.getStartDate(),
                                         weekly.getEndDate(),
                                         weekly.getEntered()))
