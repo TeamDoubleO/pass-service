@@ -198,7 +198,21 @@ public class PassServiceImpl implements PassService {
                         member.getMemberContact());
             }
             pass.updateStatus(issuanceStatus);
-            passRepository.save(pass);
+            pass = passRepository.save(pass);
+            List<String> areaCodes =
+                    passAreaRepository.findAllByPass(pass).stream()
+                            .map(PassArea::getAreaCode)
+                            .toList();
+            createIssuedLog(
+                    pass.getTenantId(),
+                    pass.getMemberId(),
+                    member.getMemberName(),
+                    member.getMemberContact(),
+                    pass.getId(),
+                    pass.getStartAt(),
+                    pass.getExpiredAt(),
+                    pass.getVisitCategory(),
+                    areaCodes);
             return new PassCreateResponse(pass.getId());
         } else {
             throw new CommonException(PassErrorCode.PASS_NOT_FOUND);
