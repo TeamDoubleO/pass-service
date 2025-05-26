@@ -28,6 +28,7 @@ public interface EntryStatsDailyRepository extends JpaRepository<EntryStatsDaily
     WHERE e.tenantId = :tenantId
       AND e.date >= :startDate
       AND e.date < :endDate
+    ORDER BY e.date DESC
 """)
     List<EntryStatsDaily> findLastWeekStats(
             String tenantId, LocalDate startDate, LocalDate endDate);
