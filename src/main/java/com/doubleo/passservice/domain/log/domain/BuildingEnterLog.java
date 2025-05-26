@@ -3,6 +3,7 @@ package com.doubleo.passservice.domain.log.domain;
 import com.doubleo.passservice.domain.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +34,7 @@ public class BuildingEnterLog extends BaseEntity {
     @Column(name = "direction", nullable = false, length = 10)
     private Direction direction;
 
+    @Builder(access = AccessLevel.PRIVATE)
     public BuildingEnterLog(
             Long buildingId, Long memberId, String memberName, Long passId, Direction direction) {
         this.buildingId = buildingId;
@@ -40,5 +42,16 @@ public class BuildingEnterLog extends BaseEntity {
         this.memberName = memberName;
         this.passId = passId;
         this.direction = direction;
+    }
+
+    public static BuildingEnterLog createBuildingEnterLog(
+            Long buildingId, Long memberId, String memberName, Long passId, Direction direction) {
+        return BuildingEnterLog.builder()
+                .buildingId(buildingId)
+                .memberId(memberId)
+                .memberName(memberName)
+                .passId(passId)
+                .direction(direction)
+                .build();
     }
 }

@@ -172,9 +172,12 @@ public class PassServiceImpl implements PassService {
                     }
                     return new PendingPassResponse(
                             pass.getId(),
+                            member.getMemberId(),
                             patient.getPatientCode(),
+                            patient.getName(),
                             member.getMemberName(),
                             member.getMemberContact(),
+                            pass.getCreatedDt(),
                             pass.getStartAt(),
                             pass.getExpiredAt());
                 });
