@@ -33,7 +33,7 @@ public class EntryStatsController {
         return statsService.getRecentMonthlyStatsList();
     }
 
-    @GetMapping("/weekly-category-summary")
+    @GetMapping("/category")
     public List<LastWeekCategoryStatsInfoListResponse> lastWeekCategoryStatsListGet() {
         return statsService.getLastWeekCategoryStats();
     }
