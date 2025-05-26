@@ -4,6 +4,7 @@ import com.doubleo.passservice.domain.log.domain.EnterLog;
 import com.doubleo.passservice.domain.log.domain.IssuedLog;
 import com.doubleo.passservice.domain.log.dto.response.EnterLogResponse;
 import com.doubleo.passservice.domain.log.dto.response.IssuedLogResponse;
+import com.doubleo.passservice.domain.log.repository.BuildingEnterLogRepository;
 import com.doubleo.passservice.domain.log.repository.EnterLogRepository;
 import com.doubleo.passservice.domain.log.repository.IssuedLogAreaRepository;
 import com.doubleo.passservice.domain.log.repository.IssuedLogRepository;
@@ -27,6 +28,7 @@ public class LogServiceImpl implements LogService {
     private final IssuedLogAreaRepository issuedLogAreaRepository;
     private final TenantValidator tenantValidator;
     private final AreaClient areaClient;
+    private final BuildingEnterLogRepository buildingEnterLogRepository;
 
     @Override
     public Page<IssuedLogResponse> getAllIssuedLog(Pageable pageable) {
@@ -68,7 +70,7 @@ public class LogServiceImpl implements LogService {
         return enterLogs.map(
                 enterLog ->
                         new EnterLogResponse(
-                                enterLog.getAreaId(),
+                                areaClient.getAreaById(enterLog.getAreaId()).getAreaCode(),
                                 areaClient
                                         .getAreaFullNameByCode(
                                                 tenantId,
