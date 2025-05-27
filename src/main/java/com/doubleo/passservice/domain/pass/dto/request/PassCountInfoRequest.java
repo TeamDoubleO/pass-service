@@ -11,7 +11,7 @@ public record PassCountInfoRequest(
         Integer period,
         LocalDate startDate,
         LocalDate endDate,
-        String areaId) {
+        List<String> areaCodes) {
     public boolean isManualDate() {
         return period == null;
     }
