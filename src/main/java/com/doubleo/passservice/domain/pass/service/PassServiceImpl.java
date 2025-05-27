@@ -16,10 +16,7 @@ import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import com.doubleo.passservice.domain.pass.repository.PassAreaRepository;
 import com.doubleo.passservice.domain.pass.repository.PassRepository;
 import com.doubleo.passservice.global.exception.CommonException;
-import com.doubleo.passservice.global.exception.errorcode.AreaErrorCode;
-import com.doubleo.passservice.global.exception.errorcode.MemberErrorCode;
 import com.doubleo.passservice.global.exception.errorcode.PassErrorCode;
-import com.doubleo.passservice.global.exception.errorcode.PatientErrorCode;
 import com.doubleo.passservice.grpc.client.AreaClient;
 import com.doubleo.passservice.grpc.client.GuardianClient;
 import com.doubleo.passservice.grpc.client.MemberClient;
@@ -84,18 +81,11 @@ public class PassServiceImpl implements PassService {
     @Override
     public PassCreateResponse createPatientPass(
             Long memberId, Long hospitalId, String tenantId, LocalDateTime startAt) {
-
         MemberResponse member = memberClient.getMemberById(memberId);
-        if (member == null) {
-            throw new CommonException(MemberErrorCode.MEMBER_NOT_FOUND);
-        }
 
         PatientResponse patient =
                 patientClient.getPatientByNameAndRegNo(
                         tenantId, member.getMemberName(), member.getMemberRegNo());
-        if (patient == null) {
-            throw new CommonException(PatientErrorCode.PATIENT_NOT_FOUND);
-        }
 
         return createPass(
                 memberId,
@@ -116,17 +106,10 @@ public class PassServiceImpl implements PassService {
             String patientCode,
             LocalDateTime startAt) {
         MemberResponse member = memberClient.getMemberById(memberId);
-        if (member == null) {
-            throw new CommonException(MemberErrorCode.MEMBER_NOT_FOUND);
-        }
-
         String memberName = member.getMemberName();
         String memberContact = member.getMemberContact();
 
         PatientResponse patient = patientClient.getPatientByPatientCode(tenantId, patientCode);
-        if (patient == null) {
-            throw new CommonException(PatientErrorCode.PATIENT_NOT_FOUND);
-        }
         Long patientId = patient.getPatientId();
 
         List<GuardianResponse> guardians =
@@ -169,13 +152,8 @@ public class PassServiceImpl implements PassService {
         return passes.map(
                 pass -> {
                     MemberResponse member = memberClient.getMemberById(pass.getMemberId());
-                    if (member == null) {
-                        throw new CommonException(MemberErrorCode.MEMBER_NOT_FOUND);
-                    }
                     PatientResponse patient = patientClient.getPatientById(pass.getPatientId());
-                    if (patient == null) {
-                        throw new CommonException(PatientErrorCode.PATIENT_NOT_FOUND);
-                    }
+
                     return new PendingPassResponse(
                             pass.getId(),
                             member.getMemberId(),
@@ -195,7 +173,9 @@ public class PassServiceImpl implements PassService {
         Optional<Pass> optionalPass = passRepository.findById(passId);
         if (optionalPass.isPresent()) {
             Pass pass = optionalPass.get();
+
             MemberResponse member = memberClient.getMemberById(pass.getMemberId());
+
             if (issuanceStatus == IssuanceStatus.ISSUED) {
                 guardianClient.createGuardian(
                         pass.getTenantId(),
@@ -235,15 +215,8 @@ public class PassServiceImpl implements PassService {
             VisitCategory visitCategory,
             IssuanceStatus status) {
         PatientResponse patient = patientClient.getPatientById(patientId);
-        if (patient == null) {
-            throw new CommonException(PatientErrorCode.PATIENT_NOT_FOUND);
-        }
 
         AreaResponse area = areaClient.getAreaById(patient.getAdmissionArea());
-        if (area == null) {
-            throw new CommonException(AreaErrorCode.AREA_NOT_FOUND);
-        }
-
         String areaCode = area.getAreaCode();
 
         Pass pass =
