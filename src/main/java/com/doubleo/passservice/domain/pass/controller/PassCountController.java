@@ -18,7 +18,6 @@ public class PassCountController {
     @PostMapping("/search")
     public List<PassCountInfoResponse> passCountListGet(
             @RequestBody @Valid PassCountInfoRequest request) {
-        System.out.println("컨트롤러 getPassCount 호출됨");
         return passCountService.getPassCount(request);
     }
 }
