@@ -37,7 +37,7 @@ public class GrpcExceptionUtil {
             String message = metadata.get(MESSAGE_KEY);
 
             log.warn("gRPC Error - code: {}, message: {}", code, message);
-            return new CommonException(ErrorCodeRegistry.resolve(className, message));
+            return new CommonException(ErrorCodeRegistry.resolve(className, code));
         }
         return new CommonException(GrpcErrorCode.GRPC_SERVER_RESPONSE_FAILED);
     }
