@@ -45,11 +45,7 @@ jobs:
 
       - name: Write firebase service key
         run: |
-          echo "${{ secrets.FIREBASE_KEY_JSON }}" | jq '.' > src/main/resources/firebase-service-account.json
-
-      - name: Check Firebase Key File
-        run: |
-            head -n 5 src/main/resources/firebase-service-account.json || true
+          echo "${{ secrets.FIREBASE_KEY_JSON_BASE64 }}" | base64 -d > src/main/resources/firebase-service-account.json
 
       - name: Run Spotless check
         run: ./gradlew spotlessCheck
