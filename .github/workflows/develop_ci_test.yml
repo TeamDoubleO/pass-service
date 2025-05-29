@@ -45,7 +45,7 @@ jobs:
 
       - name: Write firebase service key
         run: |
-          echo "${{ secrets.FIREBASE_KEY_JSON }}" > src/main/resources/firebase-service-account.json
+          echo "${{ secrets.FIREBASE_KEY_JSON }}" | jq '.' > src/main/resources/firebase-service-account.json
 
       - name: Check Firebase Key File
         run: |
