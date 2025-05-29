@@ -21,15 +21,18 @@ public class FcmInitializer {
     @PostConstruct
     public void init() {
         try {
-            InputStream refreshToken = new ClassPathResource(fcmKeyPath).getInputStream();
+            if (FirebaseApp.getApps().isEmpty()) {
+                InputStream refreshToken = new ClassPathResource(fcmKeyPath).getInputStream();
+                FirebaseOptions options =
+                        FirebaseOptions.builder()
+                                .setCredentials(GoogleCredentials.fromStream(refreshToken))
+                                .build();
 
-            FirebaseOptions options =
-                    FirebaseOptions.builder()
-                            .setCredentials(GoogleCredentials.fromStream(refreshToken))
-                            .build();
-
-            FirebaseApp.initializeApp(options);
-            log.info("FirebaseApp initialized");
+                FirebaseApp.initializeApp(options);
+                log.info("FirebaseApp initialized");
+            } else {
+                log.info("FirebaseApp is already running");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
