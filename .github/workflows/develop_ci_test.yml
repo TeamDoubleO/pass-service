@@ -47,6 +47,9 @@ jobs:
         run: |
           echo "${{ secrets.FIREBASE_KEY_JSON }}" > src/main/resources/firebase-service-account.json
 
+      - name: Check file exists
+        run: ls -al src/main/resources
+
       - name: Run Spotless check
         run: ./gradlew spotlessCheck
 
