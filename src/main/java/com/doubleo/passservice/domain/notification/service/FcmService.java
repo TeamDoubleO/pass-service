@@ -1,0 +1,45 @@
+package com.doubleo.passservice.domain.notification.service;
+
+import com.doubleo.passservice.domain.notification.dto.request.FcmSendRequest;
+import com.google.firebase.messaging.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Slf4j
+@Service
+@Transactional
+public class FcmService {
+
+    public void sendNotification(FcmSendRequest request) {
+        Message message =
+                Message.builder()
+                        .setToken(request.token())
+                        .setNotification(
+                                Notification.builder()
+                                        .setTitle(request.title())
+                                        .setBody(request.content())
+                                        .build())
+                        .setAndroidConfig(
+                                AndroidConfig.builder()
+                                        .setNotification(
+                                                AndroidNotification.builder()
+                                                        .setTitle(request.title())
+                                                        .setBody(request.content())
+                                                        .setClickAction("push_click")
+                                                        .build())
+                                        .build())
+                        .setApnsConfig(
+                                ApnsConfig.builder()
+                                        .setAps(Aps.builder().setCategory("push_click").build())
+                                        .build())
+                        .build();
+
+        try {
+            String response = FirebaseMessaging.getInstance().send(message);
+            log.info(response);
+        } catch (FirebaseMessagingException e) {
+            log.error(e.getMessage());
+        }
+    }
+}
