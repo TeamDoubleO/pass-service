@@ -44,3 +44,6 @@ out/
 
 ### gradle.properties ###
 gradle.properties
+
+### firebase admin sdk key ###
+src/main/resources/firebase-service-account.json
