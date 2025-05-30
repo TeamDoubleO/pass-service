@@ -1,5 +1,6 @@
 package com.doubleo.passservice.domain.stats.controller;
 
+import com.doubleo.passservice.domain.log.dto.response.HourlyEntryResponse;
 import com.doubleo.passservice.domain.stats.dto.response.*;
 import com.doubleo.passservice.domain.stats.service.StatsService;
 import java.util.List;
@@ -14,6 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class EntryStatsController {
 
     private final StatsService statsService;
+
+    @GetMapping("/hourly")
+    public List<HourlyEntryResponse> hourlyEntryListGet() {
+        return statsService.getHourlyEntryList();
+    }
 
     @GetMapping("/period/daily")
     public List<DailyStatsInfoListResponse> dailyPeriodStatsListGet() {

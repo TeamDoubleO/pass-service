@@ -15,7 +15,7 @@ public class IssuedLogArea extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "issued_log_area")
+    @Column(name = "issued_log_area_id")
     private Long id;
 
     @JoinColumn(name = "issued_log_id", nullable = false)
