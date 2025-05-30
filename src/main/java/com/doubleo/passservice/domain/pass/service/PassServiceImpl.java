@@ -43,9 +43,9 @@ public class PassServiceImpl implements PassService {
     public static final String GUARDIAN_APPLY_NOTIFICATION_TITLE = "보호자 신청";
     public static final String GUARDIAN_APPLY_NOTIFICATION_CONTENT = "%s 님이 보호자 신청 요청을 하였습니다.";
     public static final String GUARDIAN_APPROVED_NOTIFICATION_TITLE = "보호자 신청 승인";
-    public static final String GUARDIAN_APPROVED_NOTIFICATION_CONTENT = "%S 님의 보호자 신청이 승인되었습니다.";
+    public static final String GUARDIAN_APPROVED_NOTIFICATION_CONTENT = "%s 님의 보호자 신청이 승인되었습니다.";
     public static final String GUARDIAN_REJECTED_NOTIFICATION_TITLE = "보호자 신청 거절";
-    public static final String GUARDIAN_REJECTED_NOTIFICATION_CONTENT = "%S 님의 보호자 신청이 거절되었습니다.";
+    public static final String GUARDIAN_REJECTED_NOTIFICATION_CONTENT = "%s 님의 보호자 신청이 거절되었습니다.";
 
     private final PassRepository passRepository;
     private final PassAreaRepository passAreaRepository;
