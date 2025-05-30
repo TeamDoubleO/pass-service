@@ -1,3 +1,6 @@
 package com.doubleo.passservice.domain.notification.dto.request;
 
-public record FcmSendRequest(String token, String title, String content) {}
+import jakarta.validation.constraints.NotBlank;
+
+public record FcmSendRequest(
+        @NotBlank String token, @NotBlank String title, @NotBlank String content) {}
