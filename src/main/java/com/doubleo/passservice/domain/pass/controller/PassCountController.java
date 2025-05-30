@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/passes")
+@RequestMapping("/pass-logs")
 @RequiredArgsConstructor
 public class PassCountController {
 
