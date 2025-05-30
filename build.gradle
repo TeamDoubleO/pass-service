@@ -72,9 +72,9 @@ dependencies {
     implementation("org.modelmapper:modelmapper:3.1.1")
 
     // (1) hospital-interface 모듈
-    implementation "com.doubleo.grpc:hospital-interface:0.2.1"
-    implementation "com.doubleo.grpc:patient-interface:0.2.1"
-    implementation "com.doubleo.grpc:member-interface:0.2.1"
+    implementation "com.doubleo.grpc:hospital-interface:0.2.3"
+    implementation "com.doubleo.grpc:patient-interface:0.2.3"
+    implementation "com.doubleo.grpc:member-interface:0.2.3"
 
     // (2) gRPC 런타임
     implementation "io.grpc:grpc-netty:1.63.0"

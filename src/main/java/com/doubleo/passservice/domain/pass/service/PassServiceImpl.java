@@ -7,6 +7,8 @@ import com.doubleo.passservice.domain.log.domain.IssuedLogArea;
 import com.doubleo.passservice.domain.log.dto.response.PendingPassResponse;
 import com.doubleo.passservice.domain.log.repository.IssuedLogAreaRepository;
 import com.doubleo.passservice.domain.log.repository.IssuedLogRepository;
+import com.doubleo.passservice.domain.notification.dto.request.FcmSendRequest;
+import com.doubleo.passservice.domain.notification.service.FcmService;
 import com.doubleo.passservice.domain.pass.domain.Pass;
 import com.doubleo.passservice.domain.pass.domain.PassArea;
 import com.doubleo.passservice.domain.pass.dto.response.MemberPassInfoResponse;
@@ -38,6 +40,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PassServiceImpl implements PassService {
 
+    public static final String GUARDIAN_APPLY_NOTIFICATION_TITLE = "보호자 신청";
+    public static final String GUARDIAN_APPLY_NOTIFICATION_CONTENT = "%s 님이 보호자 신청 요청을 하였습니다.";
+    public static final String GUARDIAN_APPROVED_NOTIFICATION_TITLE = "보호자 신청 승인";
+    public static final String GUARDIAN_APPROVED_NOTIFICATION_CONTENT = "%S 님의 보호자 신청이 승인되었습니다.";
+    public static final String GUARDIAN_REJECTED_NOTIFICATION_TITLE = "보호자 신청 거절";
+    public static final String GUARDIAN_REJECTED_NOTIFICATION_CONTENT = "%S 님의 보호자 신청이 거절되었습니다.";
+
     private final PassRepository passRepository;
     private final PassAreaRepository passAreaRepository;
     private final IssuedLogRepository issuedLogRepository;
@@ -46,6 +55,7 @@ public class PassServiceImpl implements PassService {
     private final AreaClient areaClient;
     private final PatientClient patientClient;
     private final GuardianClient guardianClient;
+    private final FcmService fcmService;
 
     @Override
     public List<MemberPassInfoResponse> getAllMemberPassInfo(Long memberId) {
@@ -175,6 +185,12 @@ public class PassServiceImpl implements PassService {
             Pass pass = optionalPass.get();
 
             MemberResponse member = memberClient.getMemberById(pass.getMemberId());
+            PatientResponse patient = patientClient.getPatientById(pass.getPatientId());
+            MemberResponse patientMember =
+                    memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
+
+            pass.updateStatus(issuanceStatus);
+            pass = passRepository.save(pass);
 
             if (issuanceStatus == IssuanceStatus.ISSUED) {
                 guardianClient.createGuardian(
@@ -182,23 +198,50 @@ public class PassServiceImpl implements PassService {
                         pass.getPatientId(),
                         member.getMemberName(),
                         member.getMemberContact());
+                List<String> areaCodes =
+                        passAreaRepository.findAllByPass(pass).stream()
+                                .map(PassArea::getAreaCode)
+                                .toList();
+                createIssuedLog(
+                        pass.getTenantId(),
+                        pass.getMemberId(),
+                        member.getMemberName(),
+                        member.getMemberContact(),
+                        pass.getId(),
+                        pass.getStartAt(),
+                        pass.getExpiredAt(),
+                        pass.getVisitCategory(),
+                        areaCodes);
+                fcmService.sendNotification(
+                        new FcmSendRequest(
+                                member.getFcmToken(),
+                                GUARDIAN_APPROVED_NOTIFICATION_TITLE,
+                                String.format(
+                                        GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
+                                        member.getMemberName())));
+                fcmService.sendNotification(
+                        new FcmSendRequest(
+                                patientMember.getFcmToken(),
+                                GUARDIAN_APPROVED_NOTIFICATION_TITLE,
+                                String.format(
+                                        GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
+                                        member.getMemberName())));
+            } else if (issuanceStatus == IssuanceStatus.REJECTED) {
+                fcmService.sendNotification(
+                        new FcmSendRequest(
+                                member.getFcmToken(),
+                                GUARDIAN_REJECTED_NOTIFICATION_TITLE,
+                                String.format(
+                                        GUARDIAN_REJECTED_NOTIFICATION_CONTENT,
+                                        member.getMemberName())));
+                fcmService.sendNotification(
+                        new FcmSendRequest(
+                                patientMember.getFcmToken(),
+                                GUARDIAN_REJECTED_NOTIFICATION_TITLE,
+                                String.format(
+                                        GUARDIAN_REJECTED_NOTIFICATION_CONTENT,
+                                        member.getMemberName())));
             }
-            pass.updateStatus(issuanceStatus);
-            pass = passRepository.save(pass);
-            List<String> areaCodes =
-                    passAreaRepository.findAllByPass(pass).stream()
-                            .map(PassArea::getAreaCode)
-                            .toList();
-            createIssuedLog(
-                    pass.getTenantId(),
-                    pass.getMemberId(),
-                    member.getMemberName(),
-                    member.getMemberContact(),
-                    pass.getId(),
-                    pass.getStartAt(),
-                    pass.getExpiredAt(),
-                    pass.getVisitCategory(),
-                    areaCodes);
             return new PassCreateResponse(pass.getId());
         } else {
             throw new CommonException(PassErrorCode.PASS_NOT_FOUND);
@@ -214,6 +257,8 @@ public class PassServiceImpl implements PassService {
             LocalDateTime expiredAt,
             VisitCategory visitCategory,
             IssuanceStatus status) {
+        MemberResponse member = memberClient.getMemberById(memberId);
+
         PatientResponse patient = patientClient.getPatientById(patientId);
 
         List<AreaResponse> areas =
@@ -238,8 +283,18 @@ public class PassServiceImpl implements PassService {
                         .toList();
         passAreaRepository.saveAll(passAreas);
 
+        if (visitCategory == VisitCategory.GUARDIAN) {
+            MemberResponse patientMember =
+                    memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
+            fcmService.sendNotification(
+                    new FcmSendRequest(
+                            patientMember.getFcmToken(),
+                            GUARDIAN_APPLY_NOTIFICATION_TITLE,
+                            String.format(
+                                    GUARDIAN_APPLY_NOTIFICATION_CONTENT, member.getMemberName())));
+        }
+
         if (status == IssuanceStatus.ISSUED) {
-            MemberResponse member = memberClient.getMemberById(memberId);
             createIssuedLog(
                     tenantId,
                     memberId,
