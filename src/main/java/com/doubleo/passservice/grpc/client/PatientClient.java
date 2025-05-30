@@ -1,7 +1,6 @@
 package com.doubleo.passservice.grpc.client;
 
-import com.doubleo.passservice.global.exception.CommonException;
-import com.doubleo.passservice.global.exception.errorcode.GrpcErrorCode;
+import com.doubleo.passservice.global.exception.GrpcExceptionUtil;
 import com.doubleo.patientservice.domain.patient.grpc.server.*;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,7 @@ public class PatientClient {
             return blockingStub.getPatient(request);
         } catch (StatusRuntimeException e) {
             log.error(e.getMessage());
-            throw new CommonException(GrpcErrorCode.GRPC_SERVER_RESPONSE_FAILED);
+            throw GrpcExceptionUtil.fromStatusRuntimeException(e);
         }
     }
 
@@ -35,7 +34,7 @@ public class PatientClient {
             return blockingStub.getPatientByCode(request);
         } catch (StatusRuntimeException e) {
             log.error(e.getMessage());
-            throw new CommonException(GrpcErrorCode.GRPC_SERVER_RESPONSE_FAILED);
+            throw GrpcExceptionUtil.fromStatusRuntimeException(e);
         }
     }
 
@@ -50,7 +49,7 @@ public class PatientClient {
             return blockingStub.getPatientByNameAndRegNo(request);
         } catch (StatusRuntimeException e) {
             log.error(e.getMessage());
-            throw new CommonException(GrpcErrorCode.GRPC_SERVER_RESPONSE_FAILED);
+            throw GrpcExceptionUtil.fromStatusRuntimeException(e);
         }
     }
 }

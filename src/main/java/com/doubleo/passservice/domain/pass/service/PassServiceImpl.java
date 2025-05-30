@@ -216,8 +216,9 @@ public class PassServiceImpl implements PassService {
             IssuanceStatus status) {
         PatientResponse patient = patientClient.getPatientById(patientId);
 
-        AreaResponse area = areaClient.getAreaById(patient.getAdmissionArea());
-        String areaCode = area.getAreaCode();
+        List<AreaResponse> areas =
+                patient.getAreasList().stream().map(areaClient::getAreaById).toList();
+        List<String> areaCodes = areas.stream().map(AreaResponse::getAreaCode).toList();
 
         Pass pass =
                 Pass.createPass(
@@ -229,17 +230,16 @@ public class PassServiceImpl implements PassService {
                         patientId,
                         visitCategory,
                         status);
-        pass = passRepository.save(pass);
+        passRepository.save(pass);
 
-        PassArea passArea = PassArea.createPassArea(tenantId, pass, areaCode);
-        passAreaRepository.save(passArea);
+        List<PassArea> passAreas =
+                areaCodes.stream()
+                        .map(code -> PassArea.createPassArea(tenantId, pass, code))
+                        .toList();
+        passAreaRepository.saveAll(passAreas);
 
         if (status == IssuanceStatus.ISSUED) {
             MemberResponse member = memberClient.getMemberById(memberId);
-            List<String> areaCodes =
-                    passAreaRepository.findAllByPass(pass).stream()
-                            .map(PassArea::getAreaCode)
-                            .toList();
             createIssuedLog(
                     tenantId,
                     memberId,

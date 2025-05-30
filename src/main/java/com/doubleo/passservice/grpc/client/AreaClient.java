@@ -1,8 +1,7 @@
 package com.doubleo.passservice.grpc.client;
 
 import com.doubleo.hospitalservice.domain.area.grpc.server.*;
-import com.doubleo.passservice.global.exception.CommonException;
-import com.doubleo.passservice.global.exception.errorcode.GrpcErrorCode;
+import com.doubleo.passservice.global.exception.GrpcExceptionUtil;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -21,7 +20,7 @@ public class AreaClient {
             return blockingStub.getAreaById(request);
         } catch (StatusRuntimeException e) {
             log.warn(e.getMessage());
-            throw new CommonException(GrpcErrorCode.GRPC_SERVER_RESPONSE_FAILED);
+            throw GrpcExceptionUtil.fromStatusRuntimeException(e);
         }
     }
 
@@ -35,7 +34,7 @@ public class AreaClient {
             return blockingStub.getAreaFullNameByCode(request);
         } catch (StatusRuntimeException e) {
             log.warn(e.getMessage());
-            throw new CommonException(GrpcErrorCode.GRPC_SERVER_RESPONSE_FAILED);
+            throw GrpcExceptionUtil.fromStatusRuntimeException(e);
         }
     }
 }
