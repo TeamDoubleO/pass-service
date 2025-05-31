@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class FcmService {
 
     public void sendNotification(FcmSendRequest request) {
+        if (request.token() == null || request.token().isEmpty()) {
+            log.info("FCM token is null");
+            return;
+        }
         Message message =
                 Message.builder()
                         .setToken(request.token())
