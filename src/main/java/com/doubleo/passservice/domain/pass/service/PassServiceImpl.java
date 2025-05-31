@@ -25,7 +25,9 @@ import com.doubleo.passservice.grpc.client.MemberClient;
 import com.doubleo.passservice.grpc.client.PatientClient;
 import com.doubleo.patientservice.domain.guardian.grpc.server.GuardianResponse;
 import com.doubleo.patientservice.domain.patient.grpc.server.PatientResponse;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +92,8 @@ public class PassServiceImpl implements PassService {
 
     @Override
     public PassCreateResponse createPatientPass(
-            Long memberId, Long hospitalId, String tenantId, LocalDateTime startAt) {
+            Long memberId, Long hospitalId, String tenantId, String startAtInput) {
+        LocalDateTime startAt = parseDate(startAtInput);
         MemberResponse member = memberClient.getMemberById(memberId);
 
         PatientResponse patient =
@@ -114,7 +117,8 @@ public class PassServiceImpl implements PassService {
             Long hospitalId,
             String tenantId,
             String patientCode,
-            LocalDateTime startAt) {
+            String startAtInput) {
+        LocalDateTime startAt = parseDate(startAtInput);
         MemberResponse member = memberClient.getMemberById(memberId);
         String memberName = member.getMemberName();
         String memberContact = member.getMemberContact();
@@ -336,5 +340,9 @@ public class PassServiceImpl implements PassService {
                         .toList();
 
         issuedLogAreaRepository.saveAll(logAreas);
+    }
+
+    private LocalDateTime parseDate(String date) {
+        return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
     }
 }
