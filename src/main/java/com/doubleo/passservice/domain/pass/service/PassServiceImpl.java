@@ -11,6 +11,7 @@ import com.doubleo.passservice.domain.notification.dto.request.FcmSendRequest;
 import com.doubleo.passservice.domain.notification.service.FcmService;
 import com.doubleo.passservice.domain.pass.domain.Pass;
 import com.doubleo.passservice.domain.pass.domain.PassArea;
+import com.doubleo.passservice.domain.pass.dto.GuardianInfo;
 import com.doubleo.passservice.domain.pass.dto.response.MemberPassInfoResponse;
 import com.doubleo.passservice.domain.pass.dto.response.PassCreateResponse;
 import com.doubleo.passservice.domain.pass.enums.IssuanceStatus;
@@ -74,6 +75,21 @@ public class PassServiceImpl implements PassService {
                                 .getAreaFullName();
                 areaNames.add(areaName);
             }
+            Long patientId = pass.getPatientId();
+            PatientResponse patient = patientClient.getPatientById(patientId);
+            List<GuardianInfo> guardians;
+            if (pass.getVisitCategory() == VisitCategory.PATIENT) {
+                guardians =
+                        guardianClient.getPatientGuardianList(patientId).getGuardiansList().stream()
+                                .map(
+                                        res ->
+                                                new GuardianInfo(
+                                                        res.getGuardianName(),
+                                                        res.getGuardianContact()))
+                                .toList();
+            } else {
+                guardians = null;
+            }
             MemberPassInfoResponse response =
                     new MemberPassInfoResponse(
                             pass.getId(),
@@ -81,7 +97,9 @@ public class PassServiceImpl implements PassService {
                             pass.getHospitalId(),
                             areaNames,
                             pass.getVisitCategory(),
-                            pass.getPatientId(),
+                            patientId,
+                            patient.getName(),
+                            guardians,
                             pass.getIssuanceStatus(),
                             pass.getStartAt(),
                             pass.getExpiredAt());
