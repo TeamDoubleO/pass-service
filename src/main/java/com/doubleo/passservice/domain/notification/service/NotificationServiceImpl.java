@@ -14,10 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationServiceImpl implements NotificationService {
 
     private final MemberNotificationRepository memberNotificationRepository;
+    private final Long SEVEN_DAYS = 7L;
 
     @Override
-    public List<MemberNotificationResponse> getAllMemberNotifications(Long memberId, Long days) {
-        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(days);
+    public List<MemberNotificationResponse> getAllMemberNotifications(Long memberId) {
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(SEVEN_DAYS);
 
         return memberNotificationRepository
                 .findAllByMemberIdAndCreatedDtAfter(memberId, sevenDaysAgo)

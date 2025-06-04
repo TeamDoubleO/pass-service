@@ -4,7 +4,7 @@ import com.doubleo.passservice.domain.notification.dto.response.MemberNotificati
 import java.util.List;
 
 public interface NotificationService {
-    List<MemberNotificationResponse> getAllMemberNotifications(Long memberId, Long days);
+    List<MemberNotificationResponse> getAllMemberNotifications(Long memberId);
 
     void deleteAllMemberNotifications(Long memberId);
 }

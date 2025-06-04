@@ -19,7 +19,7 @@ public class NotificationController {
     @GetMapping
     public List<MemberNotificationResponse> MemberNotificationListGet(
             @RequestHeader("X-Member-Id") Long memberId) {
-        return notificationService.getAllMemberNotifications(memberId, 7L);
+        return notificationService.getAllMemberNotifications(memberId);
     }
 
     @Operation(summary = "All Member Notifications delete API", description = "모든 사용자의 알림 삭제 API")
