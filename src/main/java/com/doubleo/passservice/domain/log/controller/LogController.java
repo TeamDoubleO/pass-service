@@ -1,14 +1,13 @@
 package com.doubleo.passservice.domain.log.controller;
 
 import com.doubleo.passservice.domain.log.dto.request.UpdatePassStatusRequest;
-import com.doubleo.passservice.domain.log.dto.response.EnterLogResponse;
-import com.doubleo.passservice.domain.log.dto.response.IssuedLogResponse;
-import com.doubleo.passservice.domain.log.dto.response.PendingPassResponse;
+import com.doubleo.passservice.domain.log.dto.response.*;
 import com.doubleo.passservice.domain.log.service.LogService;
 import com.doubleo.passservice.domain.pass.dto.response.PassCreateResponse;
 import com.doubleo.passservice.domain.pass.service.PassService;
 import com.doubleo.passservice.global.util.TenantValidator;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,5 +51,11 @@ public class LogController {
             @RequestBody UpdatePassStatusRequest request) {
         return passService.createGuardianAndUpdatePassStatus(
                 request.passId(), request.issuanceStatus());
+    }
+
+    @Operation(summary = "Number of issues per hour", description = "시간대별 출입증 발급 수 API")
+    @GetMapping("/hourly-issuance")
+    public List<HourlyIssuanceResponse> hourlyIssuanceListGet() {
+        return logService.getHourlyIssuanceList();
     }
 }
