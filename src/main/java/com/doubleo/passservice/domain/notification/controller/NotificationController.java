@@ -15,11 +15,11 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @Operation(summary = "All Member Notification get API", description = "모든 사용자의 알림 조회 API")
+    @Operation(summary = "All Member Notification get API", description = "모든 사용자의 7일 이내 알림 조회 API")
     @GetMapping
     public List<MemberNotificationResponse> MemberNotificationListGet(
             @RequestHeader("X-Member-Id") Long memberId) {
-        return notificationService.getAllMemberNotifications(memberId);
+        return notificationService.getAllMemberNotifications(memberId, 7L);
     }
 
     @Operation(summary = "All Member Notifications delete API", description = "모든 사용자의 알림 삭제 API")
