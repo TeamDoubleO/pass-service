@@ -236,6 +236,7 @@ public class PassServiceImpl implements PassService {
                         areaCodes);
                 fcmService.sendNotification(
                         new FcmSendRequest(
+                                member.getMemberId(),
                                 member.getFcmToken(),
                                 GUARDIAN_APPROVED_NOTIFICATION_TITLE,
                                 String.format(
@@ -243,6 +244,7 @@ public class PassServiceImpl implements PassService {
                                         member.getMemberName())));
                 fcmService.sendNotification(
                         new FcmSendRequest(
+                                patientMember.getMemberId(),
                                 patientMember.getFcmToken(),
                                 GUARDIAN_APPROVED_NOTIFICATION_TITLE,
                                 String.format(
@@ -251,6 +253,7 @@ public class PassServiceImpl implements PassService {
             } else if (issuanceStatus == IssuanceStatus.REJECTED) {
                 fcmService.sendNotification(
                         new FcmSendRequest(
+                                member.getMemberId(),
                                 member.getFcmToken(),
                                 GUARDIAN_REJECTED_NOTIFICATION_TITLE,
                                 String.format(
@@ -258,6 +261,7 @@ public class PassServiceImpl implements PassService {
                                         member.getMemberName())));
                 fcmService.sendNotification(
                         new FcmSendRequest(
+                                patientMember.getMemberId(),
                                 patientMember.getFcmToken(),
                                 GUARDIAN_REJECTED_NOTIFICATION_TITLE,
                                 String.format(
@@ -310,6 +314,7 @@ public class PassServiceImpl implements PassService {
                     memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
             fcmService.sendNotification(
                     new FcmSendRequest(
+                            patientMember.getMemberId(),
                             patientMember.getFcmToken(),
                             GUARDIAN_APPLY_NOTIFICATION_TITLE,
                             String.format(
