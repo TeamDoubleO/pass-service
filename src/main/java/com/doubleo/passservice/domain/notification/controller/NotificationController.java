@@ -22,7 +22,7 @@ public class NotificationController {
         return notificationService.getAllMemberNotifications(memberId);
     }
 
-    @Operation(summary = "All Member Notifications delete APi", description = "모든 사용자의 알림 삭제 API")
+    @Operation(summary = "All Member Notifications delete API", description = "모든 사용자의 알림 삭제 API")
     @DeleteMapping
     public ResponseEntity<Void> MemberNotificationListDelete(
             @RequestHeader("X-Member-Id") Long memberId) {
