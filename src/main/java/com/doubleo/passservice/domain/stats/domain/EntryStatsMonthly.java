@@ -9,7 +9,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(
         name = "entry_stats_monthly",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"tenant_id", "year", "month"})})
+        uniqueConstraints = {
+            @UniqueConstraint(
+                    columnNames = {
+                        "tenant_id",
+                        "entry_stats_monthly_year",
+                        "entry_stats_monthly_month"
+                    })
+        })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EntryStatsMonthly extends BaseEntity {
@@ -26,4 +33,11 @@ public class EntryStatsMonthly extends BaseEntity {
 
     @Column(name = "entry_stats_monthly_entered", nullable = false)
     private Long entered;
+
+    public EntryStatsMonthly(String tenantId, int year, int month, Long entered) {
+        this.tenantId = tenantId;
+        this.year = year;
+        this.month = month;
+        this.entered = entered;
+    }
 }

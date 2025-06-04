@@ -11,7 +11,12 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "entry_stats_weekly",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"tenant_id", "start_date", "end_date"})
+            @UniqueConstraint(
+                    columnNames = {
+                        "tenant_id",
+                        "entry_stats_weekly_start_date",
+                        "entry_stats_weekly_end_date"
+                    })
         })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,4 +34,11 @@ public class EntryStatsWeekly extends BaseEntity {
 
     @Column(name = "entry_stats_weekly_entered", nullable = false)
     private Long entered;
+
+    public EntryStatsWeekly(String tenantId, LocalDate startDate, LocalDate endDate, Long entered) {
+        this.tenantId = tenantId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.entered = entered;
+    }
 }
