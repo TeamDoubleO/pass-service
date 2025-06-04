@@ -212,7 +212,8 @@ public class PassServiceImpl implements PassService {
             PatientResponse patient = patientClient.getPatientById(pass.getPatientId());
             MemberResponse patientMember = null;
             try {
-                patientMember = memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
+                patientMember =
+                        memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
             } catch (Exception e) {
                 log.warn("환자 멤버가 존재하지 않아 알림을 생략합니다.");
             }
@@ -322,9 +323,10 @@ public class PassServiceImpl implements PassService {
         if (visitCategory == VisitCategory.GUARDIAN) {
             MemberResponse patientMember = null;
             try {
-                patientMember = memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
+                patientMember =
+                        memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
             } catch (Exception e) {
-                log.warn("환자 멤버가 존재하지 않아 알림을 생략합니다.")
+                log.warn("환자 멤버가 존재하지 않아 알림을 생략합니다.");
             }
             if (patientMember != null) {
                 fcmService.sendNotification(
@@ -333,7 +335,8 @@ public class PassServiceImpl implements PassService {
                                 patientMember.getFcmToken(),
                                 GUARDIAN_APPLY_NOTIFICATION_TITLE,
                                 String.format(
-                                        GUARDIAN_APPLY_NOTIFICATION_CONTENT, member.getMemberName())));
+                                        GUARDIAN_APPLY_NOTIFICATION_CONTENT,
+                                        member.getMemberName())));
             }
         }
 
