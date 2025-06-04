@@ -33,11 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -208,8 +210,13 @@ public class PassServiceImpl implements PassService {
 
             MemberResponse member = memberClient.getMemberById(pass.getMemberId());
             PatientResponse patient = patientClient.getPatientById(pass.getPatientId());
-            MemberResponse patientMember =
-                    memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
+            MemberResponse patientMember = null;
+            try {
+                patientMember =
+                        memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
+            } catch (Exception e) {
+                log.warn("환자 멤버가 존재하지 않아 알림을 생략합니다.");
+            }
 
             pass.updateStatus(issuanceStatus);
             pass = passRepository.save(pass);
@@ -242,14 +249,16 @@ public class PassServiceImpl implements PassService {
                                 String.format(
                                         GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
                                         member.getMemberName())));
-                fcmService.sendNotification(
-                        new FcmSendRequest(
-                                patientMember.getMemberId(),
-                                patientMember.getFcmToken(),
-                                GUARDIAN_APPROVED_NOTIFICATION_TITLE,
-                                String.format(
-                                        GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
-                                        member.getMemberName())));
+                if (patientMember != null) {
+                    fcmService.sendNotification(
+                            new FcmSendRequest(
+                                    patientMember.getMemberId(),
+                                    patientMember.getFcmToken(),
+                                    GUARDIAN_APPROVED_NOTIFICATION_TITLE,
+                                    String.format(
+                                            GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
+                                            member.getMemberName())));
+                }
             } else if (issuanceStatus == IssuanceStatus.REJECTED) {
                 fcmService.sendNotification(
                         new FcmSendRequest(
@@ -259,14 +268,16 @@ public class PassServiceImpl implements PassService {
                                 String.format(
                                         GUARDIAN_REJECTED_NOTIFICATION_CONTENT,
                                         member.getMemberName())));
-                fcmService.sendNotification(
-                        new FcmSendRequest(
-                                patientMember.getMemberId(),
-                                patientMember.getFcmToken(),
-                                GUARDIAN_REJECTED_NOTIFICATION_TITLE,
-                                String.format(
-                                        GUARDIAN_REJECTED_NOTIFICATION_CONTENT,
-                                        member.getMemberName())));
+                if (patientMember != null) {
+                    fcmService.sendNotification(
+                            new FcmSendRequest(
+                                    patientMember.getMemberId(),
+                                    patientMember.getFcmToken(),
+                                    GUARDIAN_REJECTED_NOTIFICATION_TITLE,
+                                    String.format(
+                                            GUARDIAN_REJECTED_NOTIFICATION_CONTENT,
+                                            member.getMemberName())));
+                }
             }
             return new PassCreateResponse(pass.getId());
         } else {
@@ -310,15 +321,23 @@ public class PassServiceImpl implements PassService {
         passAreaRepository.saveAll(passAreas);
 
         if (visitCategory == VisitCategory.GUARDIAN) {
-            MemberResponse patientMember =
-                    memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
-            fcmService.sendNotification(
-                    new FcmSendRequest(
-                            patientMember.getMemberId(),
-                            patientMember.getFcmToken(),
-                            GUARDIAN_APPLY_NOTIFICATION_TITLE,
-                            String.format(
-                                    GUARDIAN_APPLY_NOTIFICATION_CONTENT, member.getMemberName())));
+            MemberResponse patientMember = null;
+            try {
+                patientMember =
+                        memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
+            } catch (Exception e) {
+                log.warn("환자 멤버가 존재하지 않아 알림을 생략합니다.");
+            }
+            if (patientMember != null) {
+                fcmService.sendNotification(
+                        new FcmSendRequest(
+                                patientMember.getMemberId(),
+                                patientMember.getFcmToken(),
+                                GUARDIAN_APPLY_NOTIFICATION_TITLE,
+                                String.format(
+                                        GUARDIAN_APPLY_NOTIFICATION_CONTENT,
+                                        member.getMemberName())));
+            }
         }
 
         if (status == IssuanceStatus.ISSUED) {

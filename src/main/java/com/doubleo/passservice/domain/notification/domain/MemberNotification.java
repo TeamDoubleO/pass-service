@@ -1,6 +1,6 @@
 package com.doubleo.passservice.domain.notification.domain;
 
-import com.doubleo.passservice.domain.common.model.BaseEntity;
+import com.doubleo.passservice.domain.common.model.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "member_notification")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberNotification extends BaseEntity {
+public class MemberNotification extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
