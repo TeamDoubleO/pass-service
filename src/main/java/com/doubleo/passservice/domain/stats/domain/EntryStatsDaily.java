@@ -4,18 +4,24 @@ import com.doubleo.passservice.domain.common.model.BaseEntity;
 import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(
         name = "entry_stats_daily",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"tenant_id", "date", "building_id", "visit_category"})
+            @UniqueConstraint(
+                    columnNames = {
+                        "tenant_id",
+                        "entry_stats_daily_date",
+                        "entry_stats_daily_building_id",
+                        "entry_stats_daily_visit_category"
+                    })
         })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class EntryStatsDaily extends BaseEntity {
 
     @Id
@@ -37,4 +43,19 @@ public class EntryStatsDaily extends BaseEntity {
 
     @Column(name = "entry_stats_daily_entered", nullable = false)
     private Long entered;
+
+    public EntryStatsDaily(
+            String tenantId,
+            LocalDate date,
+            Long buildingId,
+            String buildingName,
+            VisitCategory visitCategory,
+            Long entered) {
+        this.tenantId = tenantId;
+        this.date = date;
+        this.buildingId = buildingId;
+        this.buildingName = buildingName;
+        this.visitCategory = visitCategory;
+        this.entered = entered;
+    }
 }
