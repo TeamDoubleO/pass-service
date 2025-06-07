@@ -2,6 +2,8 @@ package com.doubleo.passservice.domain.notification.service;
 
 import com.doubleo.passservice.domain.notification.dto.response.MemberNotificationResponse;
 import com.doubleo.passservice.domain.notification.repository.MemberNotificationRepository;
+import com.doubleo.passservice.global.exception.CommonException;
+import com.doubleo.passservice.global.exception.errorcode.NotificationErrorCode;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,15 @@ public class NotificationServiceImpl implements NotificationService {
                 .stream()
                 .map(MemberNotificationResponse::from)
                 .toList();
+    }
+
+    @Override
+    public MemberNotificationResponse getRecentMemberNotification(Long memberId) {
+        return memberNotificationRepository
+                .findTopByMemberIdOrderByCreatedDtDesc(memberId)
+                .map(MemberNotificationResponse::from)
+                .orElseThrow(
+                        () -> new CommonException(NotificationErrorCode.NOTIFICATION_NOT_FOUND));
     }
 
     @Override

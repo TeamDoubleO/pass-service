@@ -6,5 +6,7 @@ import java.util.List;
 public interface NotificationService {
     List<MemberNotificationResponse> getAllMemberNotifications(Long memberId);
 
+    MemberNotificationResponse getRecentMemberNotification(Long memberId);
+
     void deleteAllMemberNotifications(Long memberId);
 }
