@@ -55,13 +55,12 @@ public class BuildingEnterLogConsumer {
 
             BuildingEnterLog buildingEnterLog =
                     BuildingEnterLog.createBuildingEnterLog(
+                            (String) data.get("tenantId"),
                             Long.parseLong((String) data.get("buildingId")),
                             Long.parseLong((String) data.get("memberId")),
                             (String) data.get("memberName"),
                             Long.parseLong((String) data.get("passId")),
-                            Direction.valueOf(((String) data.get("direction")).toUpperCase()),
-                            (String) data.get("tenantId"));
-
+                            Direction.valueOf(((String) data.get("direction")).toUpperCase()));
             buildingEnterLogRepository.save(buildingEnterLog);
             redisTemplate.opsForStream().acknowledge(GROUP, msg);
 

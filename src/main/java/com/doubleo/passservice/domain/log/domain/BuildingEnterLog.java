@@ -8,7 +8,6 @@ import lombok.*;
 @Table(name = "building_enter_log")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class BuildingEnterLog extends BaseEntity {
 
@@ -33,20 +32,36 @@ public class BuildingEnterLog extends BaseEntity {
     @Column(name = "direction", nullable = false, length = 10)
     private Direction direction;
 
-    public static BuildingEnterLog createBuildingEnterLog(
+    @Builder(access = AccessLevel.PRIVATE)
+    private BuildingEnterLog(
+            String tenantId,
             Long buildingId,
             Long memberId,
             String memberName,
             Long passId,
-            Direction direction,
-            String tenantId) {
-        BuildingEnterLog log = new BuildingEnterLog();
-        log.buildingId = buildingId;
-        log.memberId = memberId;
-        log.memberName = memberName;
-        log.passId = passId;
-        log.direction = direction;
-        log.tenantId = tenantId;
-        return log;
+            Direction direction) {
+        this.tenantId = tenantId;
+        this.buildingId = buildingId;
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.passId = passId;
+        this.direction = direction;
+    }
+
+    public static BuildingEnterLog createBuildingEnterLog(
+            String tenantId,
+            Long buildingId,
+            Long memberId,
+            String memberName,
+            Long passId,
+            Direction direction) {
+        return BuildingEnterLog.builder()
+                .tenantId(tenantId)
+                .buildingId(buildingId)
+                .memberId(memberId)
+                .memberName(memberName)
+                .passId(passId)
+                .direction(direction)
+                .build();
     }
 }
