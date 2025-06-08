@@ -68,6 +68,8 @@ public class RetainedCountConsumer {
 
                 redisTemplate.opsForValue().increment(redisKey);
 
+                redisTemplate.expire(redisKey, Duration.ofDays(1));
+
                 redisTemplate.opsForStream().acknowledge(STREAM_KEY, GROUP, record.getId());
 
             } catch (Exception e) {
