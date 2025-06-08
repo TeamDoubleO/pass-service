@@ -1,10 +1,13 @@
 package com.doubleo.passservice.domain.stats.service;
 
 import com.doubleo.passservice.domain.log.repository.BuildingEnterLogRepository;
+import com.doubleo.passservice.domain.pass.enums.VisitCategory;
+import com.doubleo.passservice.domain.stats.domain.DailyRetainedSnapshot;
 import com.doubleo.passservice.domain.stats.domain.EntryStatsDaily;
 import com.doubleo.passservice.domain.stats.domain.EntryStatsMonthly;
 import com.doubleo.passservice.domain.stats.domain.EntryStatsWeekly;
 import com.doubleo.passservice.domain.stats.dto.request.UpdateDailyEntryStatsRequest;
+import com.doubleo.passservice.domain.stats.repository.DailyRetainedSnapshotRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsDailyRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsMonthlyRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsWeeklyRepository;
@@ -28,6 +31,7 @@ public class StatsBatchServiceImpl implements StatsBatchService {
     private final EntryStatsDailyRepository entryStatsDailyRepository;
     private final EntryStatsWeeklyRepository entryStatsWeeklyRepository;
     private final EntryStatsMonthlyRepository entryStatsMonthlyRepository;
+    private final DailyRetainedSnapshotRepository dailyRetainedSnapshotRepository;
     private final TenantValidator tenantValidator;
 
     public void updateDailyStats() {
@@ -94,5 +98,36 @@ public class StatsBatchServiceImpl implements StatsBatchService {
         EntryStatsMonthly monthly = new EntryStatsMonthly(tenantId, year, month, count);
 
         entryStatsMonthlyRepository.save(monthly);
+    }
+
+    @Override
+    public void saveDailyRetainedSnapshot() {
+        String tenantId = tenantValidator.getTenantId();
+
+        LocalDate snapshotDate = LocalDate.now().minusDays(1);
+        LocalDateTime start = snapshotDate.atStartOfDay();
+        LocalDateTime end = start.plusDays(1);
+
+        for (VisitCategory category : VisitCategory.values()) {
+            int base =
+                    dailyRetainedSnapshotRepository
+                            .findBySnapshotDateAndTenantIdAndVisitCategory(
+                                    snapshotDate.minusDays(1), tenantId, category)
+                            .map(DailyRetainedSnapshot::getRetainedCount)
+                            .orElse(0);
+
+            int inCount =
+                    buildingEnterLogRepository.countEnteredByCategory(
+                            start, end, tenantId, category);
+            int outCount =
+                    buildingEnterLogRepository.countExitedByCategory(
+                            start, end, tenantId, category);
+            int retained = base + inCount - outCount;
+
+            DailyRetainedSnapshot snapshot =
+                    new DailyRetainedSnapshot(tenantId, snapshotDate, category, retained);
+
+            dailyRetainedSnapshotRepository.save(snapshot);
+        }
     }
 }

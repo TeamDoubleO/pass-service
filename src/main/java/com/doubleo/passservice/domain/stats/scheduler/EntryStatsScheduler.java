@@ -33,4 +33,11 @@ public class EntryStatsScheduler {
         statsBatchService.updateMonthlyStats();
         log.info("[EntryStatsScheduler] Completed monthly entry stats aggregation");
     }
+
+    @Scheduled(cron = "0 5 0 * * *")
+    public void runDailyRetainedSnapshotSave() {
+        log.info("[EntryStatsScheduler] Starting daily retained snapshot save");
+        statsBatchService.saveDailyRetainedSnapshot();
+        log.info("[EntryStatsScheduler] Completed daily retained snapshot save");
+    }
 }

@@ -3,6 +3,7 @@ package com.doubleo.passservice.domain.log.consumer;
 import com.doubleo.passservice.domain.log.domain.BuildingEnterLog;
 import com.doubleo.passservice.domain.log.domain.Direction;
 import com.doubleo.passservice.domain.log.repository.BuildingEnterLogRepository;
+import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -60,7 +61,9 @@ public class BuildingEnterLogConsumer {
                             Long.parseLong((String) data.get("memberId")),
                             (String) data.get("memberName"),
                             Long.parseLong((String) data.get("passId")),
-                            Direction.valueOf(((String) data.get("direction")).toUpperCase()));
+                            Direction.valueOf(((String) data.get("direction")).toUpperCase()),
+                            VisitCategory.valueOf(
+                                    ((String) data.get("visitCategory")).toUpperCase()));
             buildingEnterLogRepository.save(buildingEnterLog);
             redisTemplate.opsForStream().acknowledge(GROUP, msg);
 

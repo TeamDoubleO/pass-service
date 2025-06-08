@@ -1,6 +1,7 @@
 package com.doubleo.passservice.domain.log.dto.request;
 
 import com.doubleo.passservice.domain.log.domain.Direction;
+import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 
 public record CreateBuildingEnterLogRequest(
         String tenantId,
@@ -8,4 +9,5 @@ public record CreateBuildingEnterLogRequest(
         Long memberId,
         String memberName,
         Long passId,
-        Direction direction) {}
+        Direction direction,
+        VisitCategory visitCategory) {}

@@ -22,6 +22,7 @@ public class BuildingEnterLogStreamProducer {
         message.put("memberName", request.memberName());
         message.put("passId", request.passId().toString());
         message.put("direction", request.direction().name());
+        message.put("visitCategory", request.visitCategory().name());
         message.put("timestamp", LocalDateTime.now().toString());
 
         redisTemplate.opsForStream().add("building:enter:stream", message);

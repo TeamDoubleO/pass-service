@@ -2,12 +2,16 @@ package com.doubleo.passservice.domain.stats.service;
 
 import com.doubleo.passservice.domain.log.dto.response.HourlyEntryResponse;
 import com.doubleo.passservice.domain.log.repository.BuildingEnterLogRepository;
+import com.doubleo.passservice.domain.pass.enums.VisitCategory;
+import com.doubleo.passservice.domain.stats.domain.DailyRetainedSnapshot;
 import com.doubleo.passservice.domain.stats.domain.EntryStatsDaily;
 import com.doubleo.passservice.domain.stats.dto.response.*;
+import com.doubleo.passservice.domain.stats.repository.DailyRetainedSnapshotRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsDailyRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsMonthlyRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsWeeklyRepository;
 import com.doubleo.passservice.global.util.TenantValidator;
+import com.doubleo.tenantcontext.TenantContextHolder;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -32,6 +36,7 @@ public class StatsServiceImpl implements StatsService {
     private final EntryStatsWeeklyRepository entryStatsWeeklyRepository;
     private final EntryStatsMonthlyRepository entryStatsMonthlyRepository;
     private final BuildingEnterLogRepository buildingEnterLogRepository;
+    private final DailyRetainedSnapshotRepository dailyRetainedSnapshotRepository;
     private final TenantValidator tenantValidator;
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -182,5 +187,38 @@ public class StatsServiceImpl implements StatsService {
                                                             buildingEntry.getValue()));
                         })
                 .collect(Collectors.toList());
+    }
+
+    public List<RetainedStatusInfoResponse> getCurrentRetainedStatus() {
+        String tenantId = TenantContextHolder.getTenantId();
+        LocalDate today = LocalDate.now();
+
+        List<RetainedStatusInfoResponse> result = new ArrayList<>();
+
+        for (VisitCategory category : VisitCategory.values()) {
+
+            int base =
+                    dailyRetainedSnapshotRepository
+                            .findBySnapshotDateAndTenantIdAndVisitCategory(
+                                    today, tenantId, category)
+                            .map(DailyRetainedSnapshot::getRetainedCount)
+                            .orElse(0);
+
+            String inKey =
+                    String.format("visit:count:%s:%s:%s:IN", tenantId, today, category.name());
+            String outKey =
+                    String.format("visit:count:%s:%s:%s:OUT", tenantId, today, category.name());
+
+            String inVal = redisTemplate.opsForValue().get(inKey);
+            String outVal = redisTemplate.opsForValue().get(outKey);
+
+            int entered = (inVal != null && !inVal.isBlank()) ? Integer.parseInt(inVal) : 0;
+            int exited = (outVal != null && !outVal.isBlank()) ? Integer.parseInt(outVal) : 0;
+            int remaining = base + entered - exited;
+
+            result.add(new RetainedStatusInfoResponse(category, entered, exited, remaining));
+        }
+
+        return result;
     }
 }

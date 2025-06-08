@@ -1,6 +1,7 @@
 package com.doubleo.passservice.domain.log.domain;
 
 import com.doubleo.passservice.domain.common.model.BaseEntity;
+import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,6 +33,10 @@ public class BuildingEnterLog extends BaseEntity {
     @Column(name = "direction", nullable = false, length = 10)
     private Direction direction;
 
+    @Column(name = "visit_category")
+    @Enumerated(EnumType.STRING)
+    private VisitCategory visitCategory;
+
     @Builder(access = AccessLevel.PRIVATE)
     private BuildingEnterLog(
             String tenantId,
@@ -39,13 +44,15 @@ public class BuildingEnterLog extends BaseEntity {
             Long memberId,
             String memberName,
             Long passId,
-            Direction direction) {
+            Direction direction,
+            VisitCategory visitCategory) {
         this.tenantId = tenantId;
         this.buildingId = buildingId;
         this.memberId = memberId;
         this.memberName = memberName;
         this.passId = passId;
         this.direction = direction;
+        this.visitCategory = visitCategory;
     }
 
     public static BuildingEnterLog createBuildingEnterLog(
@@ -54,7 +61,8 @@ public class BuildingEnterLog extends BaseEntity {
             Long memberId,
             String memberName,
             Long passId,
-            Direction direction) {
+            Direction direction,
+            VisitCategory visitCategory) {
         return BuildingEnterLog.builder()
                 .tenantId(tenantId)
                 .buildingId(buildingId)
@@ -62,6 +70,7 @@ public class BuildingEnterLog extends BaseEntity {
                 .memberName(memberName)
                 .passId(passId)
                 .direction(direction)
+                .visitCategory(visitCategory)
                 .build();
     }
 }

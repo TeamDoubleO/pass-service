@@ -7,4 +7,6 @@ public interface StatsBatchService {
     void updateWeeklyStats();
 
     void updateMonthlyStats();
+
+    void saveDailyRetainedSnapshot();
 }

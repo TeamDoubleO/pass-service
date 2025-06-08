@@ -52,4 +52,40 @@ public interface BuildingEnterLogRepository extends JpaRepository<BuildingEnterL
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
             @Param("tenantId") String tenantId);
+
+    @Query(
+            """
+    SELECT COUNT(b)
+    FROM BuildingEnterLog b
+    JOIN Pass p ON b.passId = p.id
+    WHERE b.direction = 'IN'
+      AND b.createdDt >= :start
+      AND b.createdDt < :end
+      AND b.tenantId = :tenantId
+      AND p.visitCategory = :visitCategory
+""")
+    int countEnteredByCategory(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("tenantId") String tenantId,
+            @Param("visitCategory")
+                    com.doubleo.passservice.domain.pass.enums.VisitCategory visitCategory);
+
+    @Query(
+            """
+    SELECT COUNT(b)
+    FROM BuildingEnterLog b
+    JOIN Pass p ON b.passId = p.id
+    WHERE b.direction = 'OUT'
+      AND b.createdDt >= :start
+      AND b.createdDt < :end
+      AND b.tenantId = :tenantId
+      AND p.visitCategory = :visitCategory
+""")
+    int countExitedByCategory(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("tenantId") String tenantId,
+            @Param("visitCategory")
+                    com.doubleo.passservice.domain.pass.enums.VisitCategory visitCategory);
 }

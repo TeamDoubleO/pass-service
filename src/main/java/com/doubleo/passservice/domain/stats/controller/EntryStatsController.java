@@ -42,7 +42,12 @@ public class EntryStatsController {
     }
 
     @GetMapping("/building")
-    public List<LastWeekBuildingStatsInfoListResponse> lastWeekBuilidngStatsListGet() {
+    public List<LastWeekBuildingStatsInfoListResponse> lastWeekBuildingStatsListGet() {
         return statsService.getLastWeekBuildingStats();
+    }
+
+    @GetMapping("/dashboard-summary")
+    public List<RetainedStatusInfoResponse> currentRetainedStatusGet() {
+        return statsService.getCurrentRetainedStatus();
     }
 }
