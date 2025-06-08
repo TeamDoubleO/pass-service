@@ -1,12 +1,12 @@
 package com.doubleo.passservice.domain.stats.service;
 
-import com.doubleo.passservice.domain.log.domain.DailyRetainedSnapshot;
 import com.doubleo.passservice.domain.log.dto.response.HourlyEntryResponse;
 import com.doubleo.passservice.domain.log.repository.BuildingEnterLogRepository;
-import com.doubleo.passservice.domain.log.repository.DailyRetainedSnapshotRepository;
 import com.doubleo.passservice.domain.pass.enums.VisitCategory;
+import com.doubleo.passservice.domain.stats.domain.DailyRetainedSnapshot;
 import com.doubleo.passservice.domain.stats.domain.EntryStatsDaily;
 import com.doubleo.passservice.domain.stats.dto.response.*;
+import com.doubleo.passservice.domain.stats.repository.DailyRetainedSnapshotRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsDailyRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsMonthlyRepository;
 import com.doubleo.passservice.domain.stats.repository.EntryStatsWeeklyRepository;

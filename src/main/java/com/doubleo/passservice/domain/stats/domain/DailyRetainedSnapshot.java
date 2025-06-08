@@ -1,4 +1,4 @@
-package com.doubleo.passservice.domain.log.domain;
+package com.doubleo.passservice.domain.stats.domain;
 
 import com.doubleo.passservice.domain.common.model.BaseEntity;
 import com.doubleo.passservice.domain.pass.enums.VisitCategory;
@@ -15,7 +15,6 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
 public class DailyRetainedSnapshot extends BaseEntity {
 
     @Id
@@ -33,7 +32,14 @@ public class DailyRetainedSnapshot extends BaseEntity {
     @Column(name = "retained_count", nullable = false)
     private int retainedCount;
 
-    public void updateRetainedCount(int retainedCount) {
+    public DailyRetainedSnapshot(
+            String tenantId,
+            LocalDate snapshotDate,
+            VisitCategory visitCategory,
+            int retainedCount) {
+        this.tenantId = tenantId;
+        this.snapshotDate = snapshotDate;
+        this.visitCategory = visitCategory;
         this.retainedCount = retainedCount;
     }
 }
