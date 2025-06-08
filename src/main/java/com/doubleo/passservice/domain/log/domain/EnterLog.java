@@ -45,6 +45,7 @@ public class EnterLog extends BaseEntity {
                 .tenantId(tenantId)
                 .areaId(areaId)
                 .memberId(memberId)
+                .memberName(memberName)
                 .passId(passId)
                 .build();
     }

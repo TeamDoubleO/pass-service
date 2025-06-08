@@ -2,15 +2,13 @@ package com.doubleo.passservice.domain.log.domain;
 
 import com.doubleo.passservice.domain.common.model.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "building_enter_log")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class BuildingEnterLog extends BaseEntity {
 
     @Id
@@ -35,8 +33,14 @@ public class BuildingEnterLog extends BaseEntity {
     private Direction direction;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public BuildingEnterLog(
-            Long buildingId, Long memberId, String memberName, Long passId, Direction direction) {
+    private BuildingEnterLog(
+            String tenantId,
+            Long buildingId,
+            Long memberId,
+            String memberName,
+            Long passId,
+            Direction direction) {
+        this.tenantId = tenantId;
         this.buildingId = buildingId;
         this.memberId = memberId;
         this.memberName = memberName;
@@ -45,8 +49,14 @@ public class BuildingEnterLog extends BaseEntity {
     }
 
     public static BuildingEnterLog createBuildingEnterLog(
-            Long buildingId, Long memberId, String memberName, Long passId, Direction direction) {
+            String tenantId,
+            Long buildingId,
+            Long memberId,
+            String memberName,
+            Long passId,
+            Direction direction) {
         return BuildingEnterLog.builder()
+                .tenantId(tenantId)
                 .buildingId(buildingId)
                 .memberId(memberId)
                 .memberName(memberName)
