@@ -17,4 +17,6 @@ public interface StatsService {
     List<LastWeekCategoryStatsInfoListResponse> getLastWeekCategoryStats();
 
     List<LastWeekBuildingStatsInfoListResponse> getLastWeekBuildingStats();
+
+    List<RetainedStatusInfoResponse> getCurrentRetainedStatus();
 }
