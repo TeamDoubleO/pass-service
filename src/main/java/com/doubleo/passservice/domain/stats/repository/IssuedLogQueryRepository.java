@@ -1,4 +1,4 @@
-package com.doubleo.passservice.domain.pass.repository;
+package com.doubleo.passservice.domain.stats.repository;
 
 import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import jakarta.persistence.EntityManager;

@@ -1,9 +1,9 @@
-package com.doubleo.passservice.domain.pass.service;
+package com.doubleo.passservice.domain.stats.service;
 
-import com.doubleo.passservice.domain.pass.dto.request.PassCountInfoRequest;
-import com.doubleo.passservice.domain.pass.dto.response.PassCountInfoResponse;
 import com.doubleo.passservice.domain.pass.enums.VisitCategory;
-import com.doubleo.passservice.domain.pass.repository.IssuedLogQueryRepository;
+import com.doubleo.passservice.domain.stats.dto.request.PassCountInfoRequest;
+import com.doubleo.passservice.domain.stats.dto.response.PassCountInfoResponse;
+import com.doubleo.passservice.domain.stats.repository.IssuedLogQueryRepository;
 import com.doubleo.passservice.global.util.TenantValidator;
 import com.doubleo.passservice.grpc.client.AreaClient;
 import java.time.LocalDate;
