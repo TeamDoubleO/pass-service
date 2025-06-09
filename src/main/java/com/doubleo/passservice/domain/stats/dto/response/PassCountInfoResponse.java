@@ -1,4 +1,4 @@
-package com.doubleo.passservice.domain.pass.dto.response;
+package com.doubleo.passservice.domain.stats.dto.response;
 
 import java.time.LocalDate;
 

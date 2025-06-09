@@ -1,4 +1,4 @@
-package com.doubleo.passservice.domain.pass.dto.request;
+package com.doubleo.passservice.domain.stats.dto.request;
 
 import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import com.doubleo.passservice.global.exception.CommonException;

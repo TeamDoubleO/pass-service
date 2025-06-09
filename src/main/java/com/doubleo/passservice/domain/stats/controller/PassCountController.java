@@ -1,8 +1,8 @@
-package com.doubleo.passservice.domain.pass.controller;
+package com.doubleo.passservice.domain.stats.controller;
 
-import com.doubleo.passservice.domain.pass.dto.request.PassCountInfoRequest;
-import com.doubleo.passservice.domain.pass.dto.response.PassCountInfoResponse;
-import com.doubleo.passservice.domain.pass.service.PassCountService;
+import com.doubleo.passservice.domain.stats.dto.request.PassCountInfoRequest;
+import com.doubleo.passservice.domain.stats.dto.response.PassCountInfoResponse;
+import com.doubleo.passservice.domain.stats.service.PassCountService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
