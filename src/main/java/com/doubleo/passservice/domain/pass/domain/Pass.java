@@ -44,6 +44,9 @@ public class Pass extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private IssuanceStatus issuanceStatus;
 
+    @Column(name = "did_connection_id", nullable = true)
+    private String didConnectionId;
+
     @Builder(access = AccessLevel.PRIVATE)
     private Pass(
             String tenantId,
@@ -53,7 +56,8 @@ public class Pass extends BaseEntity {
             LocalDateTime expiredAt,
             Long patientId,
             VisitCategory visitCategory,
-            IssuanceStatus issuanceStatus) {
+            IssuanceStatus issuanceStatus,
+            String didConnectionId) {
         this.tenantId = tenantId;
         this.memberId = memberId;
         this.hospitalId = hospitalId;
@@ -62,6 +66,7 @@ public class Pass extends BaseEntity {
         this.patientId = patientId;
         this.visitCategory = visitCategory;
         this.issuanceStatus = issuanceStatus;
+        this.didConnectionId = didConnectionId;
     }
 
     public static Pass createPass(
@@ -72,7 +77,8 @@ public class Pass extends BaseEntity {
             LocalDateTime expiredAt,
             Long patientId,
             VisitCategory visitCategory,
-            IssuanceStatus issuanceStatus) {
+            IssuanceStatus issuanceStatus,
+            String didConnectionId) {
         return Pass.builder()
                 .tenantId(tenantId)
                 .memberId(memberId)
@@ -82,10 +88,15 @@ public class Pass extends BaseEntity {
                 .patientId(patientId)
                 .visitCategory(visitCategory)
                 .issuanceStatus(issuanceStatus)
+                .didConnectionId(didConnectionId)
                 .build();
     }
 
     public void updateStatus(IssuanceStatus newStatus) {
         this.issuanceStatus = newStatus;
+    }
+
+    public void updateDidConnectionId(String didConnectionId) {
+        this.didConnectionId = didConnectionId;
     }
 }
