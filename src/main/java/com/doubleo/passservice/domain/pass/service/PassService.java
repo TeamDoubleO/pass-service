@@ -1,8 +1,8 @@
 package com.doubleo.passservice.domain.pass.service;
 
-import com.doubleo.passservice.domain.log.dto.response.PendingPassResponse;
 import com.doubleo.passservice.domain.pass.dto.response.MemberPassInfoResponse;
 import com.doubleo.passservice.domain.pass.dto.response.PassCreateResponse;
+import com.doubleo.passservice.domain.pass.dto.response.PendingPassResponse;
 import com.doubleo.passservice.domain.pass.enums.IssuanceStatus;
 import java.util.List;
 import org.springframework.data.domain.Page;

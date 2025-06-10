@@ -1,4 +1,4 @@
-package com.doubleo.passservice.domain.log.dto.request;
+package com.doubleo.passservice.domain.pass.dto.request;
 
 import com.doubleo.passservice.domain.pass.enums.IssuanceStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
