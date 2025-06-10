@@ -212,7 +212,7 @@ public class PassServiceImpl implements PassService {
 
             try {
                 // TODO: 실제 connection id 가져올 부분
-                String didConnectionId = "did:peer:example123";
+                String didConnectionId = "c76e52c9-a3f9-4a59-b299-be22a0ab36b7";
                 pass.updateDidConnectionId(didConnectionId);
             } catch (Exception e) {
                 log.warn("DID Connection ID를 가져오는 데 실패했습니다: {}", e.getMessage());
@@ -306,7 +306,7 @@ public class PassServiceImpl implements PassService {
 
         try {
             // TODO: 실제 connection id 가져올 부분
-            didConnectionId = "did:peer:example123";
+            didConnectionId = "c76e52c9-a3f9-4a59-b299-be22a0ab36b7";
         } catch (Exception e) {
             log.warn("DID Connection ID를 가져오는 데 실패했습니다: {}", e.getMessage());
         }
