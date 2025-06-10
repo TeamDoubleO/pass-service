@@ -210,6 +210,14 @@ public class PassServiceImpl implements PassService {
                 log.warn("환자 멤버가 존재하지 않아 알림을 생략합니다.");
             }
 
+            try {
+                // TODO: 실제 connection id 가져올 부분
+                String connectionId = "did:peer:example123";
+                pass.updateConnectionId(connectionId);
+            } catch (Exception e) {
+                log.warn("DID Connection ID를 가져오는 데 실패했습니다: {}", e.getMessage());
+            }
+
             pass.updateStatus(issuanceStatus);
             pass = passRepository.save(pass);
 
@@ -290,9 +298,18 @@ public class PassServiceImpl implements PassService {
 
         PatientResponse patient = patientClient.getPatientById(patientId);
 
+        String connectionId = null;
+
         List<AreaResponse> areas =
                 patient.getAreasList().stream().map(areaClient::getAreaById).toList();
         List<String> areaCodes = areas.stream().map(AreaResponse::getAreaCode).toList();
+
+        try {
+            // TODO: 실제 connection id 가져올 부분
+            connectionId = "did:peer:example123";
+        } catch (Exception e) {
+            log.warn("DID Connection ID를 가져오는 데 실패했습니다: {}", e.getMessage());
+        }
 
         Pass pass =
                 Pass.createPass(
@@ -303,7 +320,8 @@ public class PassServiceImpl implements PassService {
                         expiredAt,
                         patientId,
                         visitCategory,
-                        status);
+                        status,
+                        connectionId);
         passRepository.save(pass);
 
         List<PassArea> passAreas =
