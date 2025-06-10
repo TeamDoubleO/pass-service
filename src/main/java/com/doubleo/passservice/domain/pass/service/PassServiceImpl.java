@@ -212,8 +212,8 @@ public class PassServiceImpl implements PassService {
 
             try {
                 // TODO: 실제 connection id 가져올 부분
-                String connectionId = "did:peer:example123";
-                pass.updateConnectionId(connectionId);
+                String didConnectionId = "did:peer:example123";
+                pass.updateDidConnectionId(didConnectionId);
             } catch (Exception e) {
                 log.warn("DID Connection ID를 가져오는 데 실패했습니다: {}", e.getMessage());
             }
@@ -298,7 +298,7 @@ public class PassServiceImpl implements PassService {
 
         PatientResponse patient = patientClient.getPatientById(patientId);
 
-        String connectionId = null;
+        String didConnectionId = null;
 
         List<AreaResponse> areas =
                 patient.getAreasList().stream().map(areaClient::getAreaById).toList();
@@ -306,7 +306,7 @@ public class PassServiceImpl implements PassService {
 
         try {
             // TODO: 실제 connection id 가져올 부분
-            connectionId = "did:peer:example123";
+            didConnectionId = "did:peer:example123";
         } catch (Exception e) {
             log.warn("DID Connection ID를 가져오는 데 실패했습니다: {}", e.getMessage());
         }
@@ -321,7 +321,7 @@ public class PassServiceImpl implements PassService {
                         patientId,
                         visitCategory,
                         status,
-                        connectionId);
+                        didConnectionId);
         passRepository.save(pass);
 
         List<PassArea> passAreas =

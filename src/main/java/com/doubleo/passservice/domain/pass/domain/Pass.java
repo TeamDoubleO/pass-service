@@ -44,8 +44,8 @@ public class Pass extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private IssuanceStatus issuanceStatus;
 
-    @Column(name = "pass_connection_id", nullable = true)
-    private String passConnectionId;
+    @Column(name = "did_connection_id", nullable = true)
+    private String didConnectionId;
 
     @Builder(access = AccessLevel.PRIVATE)
     private Pass(
@@ -57,7 +57,7 @@ public class Pass extends BaseEntity {
             Long patientId,
             VisitCategory visitCategory,
             IssuanceStatus issuanceStatus,
-            String passConnectionId) {
+            String didConnectionId) {
         this.tenantId = tenantId;
         this.memberId = memberId;
         this.hospitalId = hospitalId;
@@ -66,7 +66,7 @@ public class Pass extends BaseEntity {
         this.patientId = patientId;
         this.visitCategory = visitCategory;
         this.issuanceStatus = issuanceStatus;
-        this.passConnectionId = passConnectionId;
+        this.didConnectionId = didConnectionId;
     }
 
     public static Pass createPass(
@@ -78,7 +78,7 @@ public class Pass extends BaseEntity {
             Long patientId,
             VisitCategory visitCategory,
             IssuanceStatus issuanceStatus,
-            String passConnectionId) {
+            String didConnectionId) {
         return Pass.builder()
                 .tenantId(tenantId)
                 .memberId(memberId)
@@ -88,7 +88,7 @@ public class Pass extends BaseEntity {
                 .patientId(patientId)
                 .visitCategory(visitCategory)
                 .issuanceStatus(issuanceStatus)
-                .passConnectionId(passConnectionId)
+                .didConnectionId(didConnectionId)
                 .build();
     }
 
@@ -96,7 +96,7 @@ public class Pass extends BaseEntity {
         this.issuanceStatus = newStatus;
     }
 
-    public void updateConnectionId(String passConnectionId) {
-        this.passConnectionId = passConnectionId;
+    public void updateDidConnectionId(String didConnectionId) {
+        this.didConnectionId = didConnectionId;
     }
 }
