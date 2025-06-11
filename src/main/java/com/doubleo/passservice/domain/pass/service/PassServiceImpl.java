@@ -6,8 +6,8 @@ import com.doubleo.passservice.domain.notification.dto.request.FcmSendRequest;
 import com.doubleo.passservice.domain.notification.service.FcmService;
 import com.doubleo.passservice.domain.pass.domain.Pass;
 import com.doubleo.passservice.domain.pass.domain.PassArea;
+import com.doubleo.passservice.domain.pass.dto.AreaInfo;
 import com.doubleo.passservice.domain.pass.dto.GuardianInfo;
-import com.doubleo.passservice.domain.pass.dto.response.AccessAreaInfoResponse;
 import com.doubleo.passservice.domain.pass.dto.response.MemberPassInfoResponse;
 import com.doubleo.passservice.domain.pass.dto.response.PassCreateResponse;
 import com.doubleo.passservice.domain.pass.dto.response.PendingPassResponse;
@@ -62,14 +62,14 @@ public class PassServiceImpl implements PassService {
 
         for (Pass pass : passes) {
             List<PassArea> passAreas = passAreaRepository.findAllByPass(pass);
-            List<AccessAreaInfoResponse> accessAreas = new ArrayList<>();
+            List<AreaInfo> accessAreas = new ArrayList<>();
             for (PassArea passArea : passAreas) {
                 String areaName =
                         areaClient
                                 .getAreaFullNameByCode(
                                         passArea.getTenantId(), passArea.getAreaCode())
                                 .getAreaFullName();
-                accessAreas.add(new AccessAreaInfoResponse(passArea.getAreaCode(), areaName));
+                accessAreas.add(new AreaInfo(passArea.getAreaCode(), areaName));
             }
             Long patientId = pass.getPatientId();
             PatientResponse patient = patientClient.getPatientById(patientId);
