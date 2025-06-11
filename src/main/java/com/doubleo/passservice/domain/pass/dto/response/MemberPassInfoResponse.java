@@ -1,5 +1,6 @@
 package com.doubleo.passservice.domain.pass.dto.response;
 
+import com.doubleo.passservice.domain.pass.dto.AreaInfo;
 import com.doubleo.passservice.domain.pass.dto.GuardianInfo;
 import com.doubleo.passservice.domain.pass.enums.IssuanceStatus;
 import com.doubleo.passservice.domain.pass.enums.VisitCategory;
@@ -12,7 +13,7 @@ public record MemberPassInfoResponse(
         Long passId,
         Long memberId,
         Long hospitalId,
-        List<String> accessAreaNames,
+        List<AreaInfo> accessAreas,
         VisitCategory visitCategory,
         Long patientId,
         String patientName,
