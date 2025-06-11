@@ -58,6 +58,7 @@ public class PassServiceImpl implements PassService {
     public List<MemberPassInfoResponse> getAllMemberPassInfo(Long memberId) {
         List<Pass> passes = passRepository.findAllByMemberId(memberId);
         List<MemberPassInfoResponse> responses = new ArrayList<>();
+        List<String> areaCodes = new ArrayList<>();
         for (Pass pass : passes) {
             List<PassArea> passAreas = passAreaRepository.findAllByPass(pass);
             List<String> areaNames = new ArrayList<>();
@@ -68,6 +69,7 @@ public class PassServiceImpl implements PassService {
                                         passArea.getTenantId(), passArea.getAreaCode())
                                 .getAreaFullName();
                 areaNames.add(areaName);
+                areaCodes.add(passArea.getAreaCode());
             }
             Long patientId = pass.getPatientId();
             PatientResponse patient = patientClient.getPatientById(patientId);
@@ -90,6 +92,7 @@ public class PassServiceImpl implements PassService {
                             pass.getMemberId(),
                             pass.getHospitalId(),
                             areaNames,
+                            areaCodes,
                             pass.getVisitCategory(),
                             patientId,
                             patient.getName(),

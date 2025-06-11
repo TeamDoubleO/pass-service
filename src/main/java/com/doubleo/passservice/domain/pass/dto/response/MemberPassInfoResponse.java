@@ -13,6 +13,7 @@ public record MemberPassInfoResponse(
         Long memberId,
         Long hospitalId,
         List<String> accessAreaNames,
+        List<String> accessAreaCodes,
         VisitCategory visitCategory,
         Long patientId,
         String patientName,
