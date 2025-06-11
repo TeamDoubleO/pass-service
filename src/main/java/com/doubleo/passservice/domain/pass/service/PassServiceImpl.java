@@ -278,7 +278,7 @@ public class PassServiceImpl implements PassService {
                                     GUARDIAN_APPROVED_NOTIFICATION_TITLE,
                                     String.format(
                                             GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
-                                            patientMember.getMemberName())));
+                                            member.getMemberName())));
                 }
             } else if (issuanceStatus == IssuanceStatus.REJECTED) {
                 fcmService.sendNotification(
@@ -309,7 +309,7 @@ public class PassServiceImpl implements PassService {
                                     GUARDIAN_REJECTED_NOTIFICATION_TITLE,
                                     String.format(
                                             GUARDIAN_REJECTED_NOTIFICATION_CONTENT,
-                                            patientMember.getMemberName())));
+                                            member.getMemberName())));
                 }
             }
             return new PassCreateResponse(pass.getId());
