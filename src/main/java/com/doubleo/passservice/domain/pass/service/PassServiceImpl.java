@@ -387,7 +387,7 @@ public class PassServiceImpl implements PassService {
                                         GUARDIAN_PASS_APPLY_TO_PATIENT_CONTENT,
                                         pass.getStartAt()
                                                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                                        patientMember.getMemberName())));
+                                        member.getMemberName())));
             }
             memberNotificationRepository.save(
                     MemberNotification.createMemberNotification(
@@ -397,7 +397,7 @@ public class PassServiceImpl implements PassService {
                                     GUARDIAN_PASS_APPLY_TO_GUARDIAN_CONTENT,
                                     pass.getStartAt()
                                             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                                    member.getMemberName())));
+                                    patient.getName())));
         }
 
         if (status == IssuanceStatus.ISSUED) {
