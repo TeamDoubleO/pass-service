@@ -240,16 +240,20 @@ public class PassServiceImpl implements PassService {
                         passAreaRepository.findAllByPass(pass).stream()
                                 .map(PassArea::getAreaCode)
                                 .toList();
-                logClient.createIssuedLog(
-                        pass.getTenantId(),
-                        pass.getMemberId(),
-                        member.getMemberName(),
-                        member.getMemberContact(),
-                        pass.getId(),
-                        pass.getStartAt(),
-                        pass.getExpiredAt(),
-                        pass.getVisitCategory(),
-                        areaCodes);
+                try {
+                    logClient.createIssuedLog(
+                            pass.getTenantId(),
+                            pass.getMemberId(),
+                            member.getMemberName(),
+                            member.getMemberContact(),
+                            pass.getId(),
+                            pass.getStartAt(),
+                            pass.getExpiredAt(),
+                            pass.getVisitCategory(),
+                            areaCodes);
+                } catch (Exception e) {
+                    log.error("로그 전송 실패: {}", e.getMessage());
+                }
                 fcmService.sendNotification(
                         new FcmSendRequest(
                                 member.getFcmToken(),
@@ -401,16 +405,20 @@ public class PassServiceImpl implements PassService {
         }
 
         if (status == IssuanceStatus.ISSUED) {
-            logClient.createIssuedLog(
-                    tenantId,
-                    memberId,
-                    member.getMemberName(),
-                    member.getMemberContact(),
-                    pass.getId(),
-                    startAt,
-                    expiredAt,
-                    visitCategory,
-                    areaCodes);
+            try {
+                logClient.createIssuedLog(
+                        tenantId,
+                        memberId,
+                        member.getMemberName(),
+                        member.getMemberContact(),
+                        pass.getId(),
+                        startAt,
+                        expiredAt,
+                        visitCategory,
+                        areaCodes);
+            } catch (Exception e) {
+                log.error("로그 전송 실패: {}", e.getMessage());
+            }
         }
         return new PassCreateResponse(pass.getId());
     }
