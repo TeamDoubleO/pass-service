@@ -19,6 +19,12 @@ public class AdminPassController {
     private final PassService passService;
     private final TenantValidator tenantValidator;
 
+    @Operation(summary = "Health Check API", description = "서비스 상태 확인 API")
+    @GetMapping("/health")
+    public String HealthCheck() {
+        return "Pass Service is healthy";
+    }
+
     @Operation(summary = "All pending pass get API", description = "모든 발급 대기중인 출입증 조회 API")
     @GetMapping("/pending")
     public Page<PendingPassResponse> PendingPassListGet(
