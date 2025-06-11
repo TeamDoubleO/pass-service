@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin-passes")
+@RequestMapping("/passes")
 @RequiredArgsConstructor
 public class AdminPassController {
 
