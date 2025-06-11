@@ -2,7 +2,9 @@ package com.doubleo.passservice.domain.pass.service;
 
 import com.doubleo.hospitalservice.domain.area.grpc.server.AreaResponse;
 import com.doubleo.memberservice.domain.member.grpc.server.MemberResponse;
+import com.doubleo.passservice.domain.notification.domain.MemberNotification;
 import com.doubleo.passservice.domain.notification.dto.request.FcmSendRequest;
+import com.doubleo.passservice.domain.notification.repository.MemberNotificationRepository;
 import com.doubleo.passservice.domain.notification.service.FcmService;
 import com.doubleo.passservice.domain.pass.domain.Pass;
 import com.doubleo.passservice.domain.pass.domain.PassArea;
@@ -38,15 +40,22 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PassServiceImpl implements PassService {
 
-    public static final String GUARDIAN_APPLY_NOTIFICATION_TITLE = "보호자 신청";
-    public static final String GUARDIAN_APPLY_NOTIFICATION_CONTENT = "%s 님이 보호자 신청 요청을 하였습니다.";
+    public static final String GUARDIAN_PASS_APPLY_NOTIFICATION_TITLE = "보호자 출입 신청";
+    public static final String GUARDIAN_PASS_APPLY_NOTIFICATION_CONTENT =
+            "%s님이 보호자 출입 신청 요청을 하였습니다.";
+    public static final String GUARDIAN_PASS_APPLY_TO_GUARDIAN_TITLE = "보호자 출입 신청";
+    public static final String GUARDIAN_PASS_APPLY_TO_GUARDIAN_CONTENT =
+            "%s, %s님에 대한 보호자 출입이 신청되었습니다.";
+    public static final String GUARDIAN_PASS_APPLY_TO_PATIENT_TITLE = "보호자 출입 신청";
+    public static final String GUARDIAN_PASS_APPLY_TO_PATIENT_CONTENT = "%s, %s님이 보호자 출입을 신청하였습니다.";
     public static final String GUARDIAN_APPROVED_NOTIFICATION_TITLE = "보호자 신청 승인";
-    public static final String GUARDIAN_APPROVED_NOTIFICATION_CONTENT = "%s 님의 보호자 신청이 승인되었습니다.";
+    public static final String GUARDIAN_APPROVED_NOTIFICATION_CONTENT = "%s님의 보호자 신청이 승인되었습니다.";
     public static final String GUARDIAN_REJECTED_NOTIFICATION_TITLE = "보호자 신청 거절";
-    public static final String GUARDIAN_REJECTED_NOTIFICATION_CONTENT = "%s 님의 보호자 신청이 거절되었습니다.";
+    public static final String GUARDIAN_REJECTED_NOTIFICATION_CONTENT = "%s님의 보호자 신청이 거절되었습니다.";
 
     private final PassRepository passRepository;
     private final PassAreaRepository passAreaRepository;
+    private final MemberNotificationRepository memberNotificationRepository;
     private final MemberClient memberClient;
     private final AreaClient areaClient;
     private final PatientClient patientClient;
@@ -243,8 +252,14 @@ public class PassServiceImpl implements PassService {
                         areaCodes);
                 fcmService.sendNotification(
                         new FcmSendRequest(
-                                member.getMemberId(),
                                 member.getFcmToken(),
+                                GUARDIAN_APPROVED_NOTIFICATION_TITLE,
+                                String.format(
+                                        GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
+                                        member.getMemberName())));
+                memberNotificationRepository.save(
+                        MemberNotification.createMemberNotification(
+                                member.getMemberId(),
                                 GUARDIAN_APPROVED_NOTIFICATION_TITLE,
                                 String.format(
                                         GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
@@ -252,18 +267,30 @@ public class PassServiceImpl implements PassService {
                 if (patientMember != null) {
                     fcmService.sendNotification(
                             new FcmSendRequest(
-                                    patientMember.getMemberId(),
                                     patientMember.getFcmToken(),
                                     GUARDIAN_APPROVED_NOTIFICATION_TITLE,
                                     String.format(
                                             GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
                                             member.getMemberName())));
+                    memberNotificationRepository.save(
+                            MemberNotification.createMemberNotification(
+                                    patientMember.getMemberId(),
+                                    GUARDIAN_APPROVED_NOTIFICATION_TITLE,
+                                    String.format(
+                                            GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
+                                            patientMember.getMemberName())));
                 }
             } else if (issuanceStatus == IssuanceStatus.REJECTED) {
                 fcmService.sendNotification(
                         new FcmSendRequest(
-                                member.getMemberId(),
                                 member.getFcmToken(),
+                                GUARDIAN_REJECTED_NOTIFICATION_TITLE,
+                                String.format(
+                                        GUARDIAN_REJECTED_NOTIFICATION_CONTENT,
+                                        member.getMemberName())));
+                memberNotificationRepository.save(
+                        MemberNotification.createMemberNotification(
+                                member.getMemberId(),
                                 GUARDIAN_REJECTED_NOTIFICATION_TITLE,
                                 String.format(
                                         GUARDIAN_REJECTED_NOTIFICATION_CONTENT,
@@ -271,12 +298,18 @@ public class PassServiceImpl implements PassService {
                 if (patientMember != null) {
                     fcmService.sendNotification(
                             new FcmSendRequest(
-                                    patientMember.getMemberId(),
                                     patientMember.getFcmToken(),
                                     GUARDIAN_REJECTED_NOTIFICATION_TITLE,
                                     String.format(
                                             GUARDIAN_REJECTED_NOTIFICATION_CONTENT,
                                             member.getMemberName())));
+                    memberNotificationRepository.save(
+                            MemberNotification.createMemberNotification(
+                                    patientMember.getMemberId(),
+                                    GUARDIAN_REJECTED_NOTIFICATION_TITLE,
+                                    String.format(
+                                            GUARDIAN_REJECTED_NOTIFICATION_CONTENT,
+                                            patientMember.getMemberName())));
                 }
             }
             return new PassCreateResponse(pass.getId());
@@ -341,13 +374,30 @@ public class PassServiceImpl implements PassService {
             if (patientMember != null) {
                 fcmService.sendNotification(
                         new FcmSendRequest(
-                                patientMember.getMemberId(),
                                 patientMember.getFcmToken(),
-                                GUARDIAN_APPLY_NOTIFICATION_TITLE,
+                                GUARDIAN_PASS_APPLY_NOTIFICATION_TITLE,
                                 String.format(
-                                        GUARDIAN_APPLY_NOTIFICATION_CONTENT,
+                                        GUARDIAN_PASS_APPLY_NOTIFICATION_CONTENT,
                                         member.getMemberName())));
+                memberNotificationRepository.save(
+                        MemberNotification.createMemberNotification(
+                                patientMember.getMemberId(),
+                                GUARDIAN_PASS_APPLY_TO_PATIENT_TITLE,
+                                String.format(
+                                        GUARDIAN_PASS_APPLY_TO_PATIENT_CONTENT,
+                                        pass.getStartAt()
+                                                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                                        patientMember.getMemberName())));
             }
+            memberNotificationRepository.save(
+                    MemberNotification.createMemberNotification(
+                            member.getMemberId(),
+                            GUARDIAN_PASS_APPLY_TO_GUARDIAN_TITLE,
+                            String.format(
+                                    GUARDIAN_PASS_APPLY_TO_GUARDIAN_CONTENT,
+                                    pass.getStartAt()
+                                            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                                    member.getMemberName())));
         }
 
         if (status == IssuanceStatus.ISSUED) {

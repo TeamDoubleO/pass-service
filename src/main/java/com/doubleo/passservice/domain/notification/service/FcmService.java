@@ -1,6 +1,5 @@
 package com.doubleo.passservice.domain.notification.service;
 
-import com.doubleo.passservice.domain.notification.domain.MemberNotification;
 import com.doubleo.passservice.domain.notification.dto.request.FcmSendRequest;
 import com.doubleo.passservice.domain.notification.repository.MemberNotificationRepository;
 import com.google.firebase.messaging.*;
@@ -18,10 +17,6 @@ public class FcmService {
     private final MemberNotificationRepository memberNotificationRepository;
 
     public void sendNotification(FcmSendRequest request) {
-        MemberNotification memberNotification =
-                MemberNotification.createMemberNotification(
-                        request.memberId(), request.title(), request.content());
-        memberNotificationRepository.save(memberNotification);
         if (request.token() == null || request.token().isEmpty()) {
             log.info("FCM token is null");
             return;
