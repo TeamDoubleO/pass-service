@@ -7,6 +7,7 @@ import com.doubleo.passservice.domain.notification.service.FcmService;
 import com.doubleo.passservice.domain.pass.domain.Pass;
 import com.doubleo.passservice.domain.pass.domain.PassArea;
 import com.doubleo.passservice.domain.pass.dto.GuardianInfo;
+import com.doubleo.passservice.domain.pass.dto.response.AccessAreaInfoResponse;
 import com.doubleo.passservice.domain.pass.dto.response.MemberPassInfoResponse;
 import com.doubleo.passservice.domain.pass.dto.response.PassCreateResponse;
 import com.doubleo.passservice.domain.pass.dto.response.PendingPassResponse;
@@ -58,18 +59,17 @@ public class PassServiceImpl implements PassService {
     public List<MemberPassInfoResponse> getAllMemberPassInfo(Long memberId) {
         List<Pass> passes = passRepository.findAllByMemberId(memberId);
         List<MemberPassInfoResponse> responses = new ArrayList<>();
-        List<String> areaCodes = new ArrayList<>();
+
         for (Pass pass : passes) {
             List<PassArea> passAreas = passAreaRepository.findAllByPass(pass);
-            List<String> areaNames = new ArrayList<>();
+            List<AccessAreaInfoResponse> accessAreas = new ArrayList<>();
             for (PassArea passArea : passAreas) {
                 String areaName =
                         areaClient
                                 .getAreaFullNameByCode(
                                         passArea.getTenantId(), passArea.getAreaCode())
                                 .getAreaFullName();
-                areaNames.add(areaName);
-                areaCodes.add(passArea.getAreaCode());
+                accessAreas.add(new AccessAreaInfoResponse(passArea.getAreaCode(), areaName));
             }
             Long patientId = pass.getPatientId();
             PatientResponse patient = patientClient.getPatientById(patientId);
@@ -91,8 +91,7 @@ public class PassServiceImpl implements PassService {
                             pass.getId(),
                             pass.getMemberId(),
                             pass.getHospitalId(),
-                            areaNames,
-                            areaCodes,
+                            accessAreas,
                             pass.getVisitCategory(),
                             patientId,
                             patient.getName(),
