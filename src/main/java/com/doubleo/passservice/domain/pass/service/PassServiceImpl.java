@@ -49,8 +49,6 @@ public class PassServiceImpl implements PassService {
             "%s, %s님에 대한 보호자 출입이 신청되었습니다.";
     public static final String GUARDIAN_PASS_APPLY_TO_PATIENT_TITLE = "보호자 출입 신청";
     public static final String GUARDIAN_PASS_APPLY_TO_PATIENT_CONTENT = "%s, %s님이 보호자 출입을 신청하였습니다.";
-    public static final String GUARDIAN_APPROVED_NOTIFICATION_TITLE = "보호자 신청 승인";
-    public static final String GUARDIAN_APPROVED_NOTIFICATION_CONTENT = "%s님의 보호자 신청이 승인되었습니다.";
     public static final String GUARDIAN_REJECTED_NOTIFICATION_TITLE = "보호자 신청 거절";
     public static final String GUARDIAN_REJECTED_NOTIFICATION_CONTENT = "%s님의 보호자 신청이 거절되었습니다.";
 
@@ -270,54 +268,7 @@ public class PassServiceImpl implements PassService {
                         pass.getPatientId(),
                         member.getMemberName(),
                         member.getMemberContact());
-                List<String> areaCodes =
-                        passAreaRepository.findAllByPass(pass).stream()
-                                .map(PassArea::getAreaCode)
-                                .toList();
-                try {
-                    logClient.createIssuedLog(
-                            pass.getTenantId(),
-                            pass.getMemberId(),
-                            member.getMemberName(),
-                            member.getMemberContact(),
-                            pass.getId(),
-                            pass.getStartAt(),
-                            pass.getExpiredAt(),
-                            pass.getVisitCategory(),
-                            areaCodes);
-                } catch (Exception e) {
-                    log.error("로그 전송 실패: {}", e.getMessage());
-                }
-                fcmService.sendNotification(
-                        new FcmSendRequest(
-                                member.getFcmToken(),
-                                GUARDIAN_APPROVED_NOTIFICATION_TITLE,
-                                String.format(
-                                        GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
-                                        member.getMemberName())));
-                memberNotificationRepository.save(
-                        MemberNotification.createMemberNotification(
-                                member.getMemberId(),
-                                GUARDIAN_APPROVED_NOTIFICATION_TITLE,
-                                String.format(
-                                        GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
-                                        member.getMemberName())));
-                if (patientMember != null) {
-                    fcmService.sendNotification(
-                            new FcmSendRequest(
-                                    patientMember.getFcmToken(),
-                                    GUARDIAN_APPROVED_NOTIFICATION_TITLE,
-                                    String.format(
-                                            GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
-                                            member.getMemberName())));
-                    memberNotificationRepository.save(
-                            MemberNotification.createMemberNotification(
-                                    patientMember.getMemberId(),
-                                    GUARDIAN_APPROVED_NOTIFICATION_TITLE,
-                                    String.format(
-                                            GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
-                                            member.getMemberName())));
-                }
+
             } else if (issuanceStatus == IssuanceStatus.REJECTED) {
 
                 pass.updateStatus(IssuanceStatus.REJECTED);
@@ -433,22 +384,6 @@ public class PassServiceImpl implements PassService {
                                     patient.getName())));
         }
 
-        if (status == IssuanceStatus.ISSUED) {
-            try {
-                logClient.createIssuedLog(
-                        tenantId,
-                        memberId,
-                        member.getMemberName(),
-                        member.getMemberContact(),
-                        pass.getId(),
-                        startAt,
-                        expiredAt,
-                        visitCategory,
-                        areaCodes);
-            } catch (Exception e) {
-                log.error("로그 전송 실패: {}", e.getMessage());
-            }
-        }
         return new PassCreateResponse(pass.getId());
     }
 
