@@ -83,6 +83,7 @@ dependencies {
     implementation "io.grpc:grpc-netty:1.63.0"
     implementation "io.grpc:grpc-protobuf:1.63.0"
     implementation "io.grpc:grpc-stub:1.63.0"
+    implementation "io.netty:netty-tcnative-boringssl-static:2.0.65.Final"
 
     // (3) Spring Boot starter for gRPC 서버/클라이언트 자동설정
     implementation 'com.google.protobuf:protobuf-java:3.24.4'
