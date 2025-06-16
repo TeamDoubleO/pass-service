@@ -5,4 +5,5 @@ public enum IssuanceStatus {
     PENDING,
     REJECTED,
     EXPIRED,
+    PROCESSING
 }

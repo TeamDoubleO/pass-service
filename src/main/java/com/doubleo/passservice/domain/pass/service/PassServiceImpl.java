@@ -49,8 +49,6 @@ public class PassServiceImpl implements PassService {
             "%s, %s님에 대한 보호자 출입이 신청되었습니다.";
     public static final String GUARDIAN_PASS_APPLY_TO_PATIENT_TITLE = "보호자 출입 신청";
     public static final String GUARDIAN_PASS_APPLY_TO_PATIENT_CONTENT = "%s, %s님이 보호자 출입을 신청하였습니다.";
-    public static final String GUARDIAN_APPROVED_NOTIFICATION_TITLE = "보호자 신청 승인";
-    public static final String GUARDIAN_APPROVED_NOTIFICATION_CONTENT = "%s님의 보호자 신청이 승인되었습니다.";
     public static final String GUARDIAN_REJECTED_NOTIFICATION_TITLE = "보호자 신청 거절";
     public static final String GUARDIAN_REJECTED_NOTIFICATION_CONTENT = "%s님의 보호자 신청이 거절되었습니다.";
 
@@ -62,6 +60,7 @@ public class PassServiceImpl implements PassService {
     private final PatientClient patientClient;
     private final GuardianClient guardianClient;
     private final LogClient logClient;
+    private final AcapyClient acapyClient;
     private final FcmService fcmService;
 
     @Override
@@ -123,15 +122,29 @@ public class PassServiceImpl implements PassService {
                 patientClient.getPatientByNameAndRegNo(
                         tenantId, member.getMemberName(), member.getMemberRegNo());
 
-        return createPass(
-                memberId,
-                hospitalId,
-                patient.getPatientId(),
-                tenantId,
-                startAt,
-                startAt.plusDays(1),
-                VisitCategory.PATIENT,
-                IssuanceStatus.ISSUED);
+        PassCreateResponse response =
+                createPass(
+                        memberId,
+                        hospitalId,
+                        patient.getPatientId(),
+                        tenantId,
+                        startAt,
+                        startAt.plusDays(1),
+                        VisitCategory.PATIENT,
+                        IssuanceStatus.PROCESSING);
+
+        try {
+            boolean success = acapyClient.issueVc(tenantId, response.passId(), memberId);
+            if (!success) {
+                log.error("VC 발급 상태 false");
+                throw new CommonException(PassErrorCode.VC_ISSUE_FAILED);
+            }
+        } catch (Exception e) {
+            log.error("VC 발급 중 예외 발생: {}", e.getMessage());
+            throw new CommonException(PassErrorCode.VC_ISSUE_FAILED);
+        }
+
+        return response;
     }
 
     @Override
@@ -154,15 +167,27 @@ public class PassServiceImpl implements PassService {
         for (GuardianResponse guardian : guardians) {
             if (guardian.getGuardianName().equals(memberName)
                     && guardian.getGuardianContact().equals(memberContact)) {
-                return createPass(
-                        memberId,
-                        hospitalId,
-                        patientId,
-                        tenantId,
-                        startAt,
-                        startAt.plusDays(1),
-                        VisitCategory.GUARDIAN,
-                        IssuanceStatus.ISSUED);
+                PassCreateResponse response =
+                        createPass(
+                                memberId,
+                                hospitalId,
+                                patientId,
+                                tenantId,
+                                startAt,
+                                startAt.plusDays(1),
+                                VisitCategory.GUARDIAN,
+                                IssuanceStatus.PROCESSING);
+                try {
+                    boolean success = acapyClient.issueVc(tenantId, response.passId(), memberId);
+                    if (!success) {
+                        log.error("VC 발급 상태 false");
+                        throw new CommonException(PassErrorCode.VC_ISSUE_FAILED);
+                    }
+                } catch (Exception e) {
+                    log.error("VC 발급 중 예외 발생: {}", e.getMessage());
+                    throw new CommonException(PassErrorCode.VC_ISSUE_FAILED);
+                }
+                return response;
             }
         }
         return createPass(
@@ -174,11 +199,6 @@ public class PassServiceImpl implements PassService {
                 startAt.plusDays(1),
                 VisitCategory.GUARDIAN,
                 IssuanceStatus.PENDING);
-    }
-
-    @Override
-    public void deletePass(Long passId) {
-        passRepository.deleteById(passId);
     }
 
     @Override
@@ -205,6 +225,11 @@ public class PassServiceImpl implements PassService {
     }
 
     @Override
+    public void deletePass(Long passId) {
+        passRepository.deleteById(passId);
+    }
+
+    @Override
     public PassCreateResponse createGuardianAndUpdatePassStatus(
             Long passId, IssuanceStatus issuanceStatus) {
         Optional<Pass> optionalPass = passRepository.findById(passId);
@@ -221,72 +246,34 @@ public class PassServiceImpl implements PassService {
                 log.warn("환자 멤버가 존재하지 않아 알림을 생략합니다.");
             }
 
-            try {
-                // TODO: 실제 connection id 가져올 부분
-                String didConnectionId = "c76e52c9-a3f9-4a59-b299-be22a0ab36b7";
-                pass.updateDidConnectionId(didConnectionId);
-            } catch (Exception e) {
-                log.warn("DID Connection ID를 가져오는 데 실패했습니다: {}", e.getMessage());
-            }
-
-            pass.updateStatus(issuanceStatus);
-            pass = passRepository.save(pass);
-
             if (issuanceStatus == IssuanceStatus.ISSUED) {
+
+                try {
+                    boolean success =
+                            acapyClient.issueVc(pass.getTenantId(), passId, pass.getMemberId());
+                    if (!success) {
+                        log.error("VC 발급 상태 false");
+                        throw new CommonException(PassErrorCode.VC_ISSUE_FAILED);
+                    }
+                } catch (Exception e) {
+                    log.error("VC 발급 중 예외 발생: {}", e.getMessage());
+                    throw new CommonException(PassErrorCode.VC_ISSUE_FAILED);
+                }
+
+                pass.updateStatus(IssuanceStatus.PROCESSING);
+                pass = passRepository.save(pass);
+
                 guardianClient.createGuardian(
                         pass.getTenantId(),
                         pass.getPatientId(),
                         member.getMemberName(),
                         member.getMemberContact());
-                List<String> areaCodes =
-                        passAreaRepository.findAllByPass(pass).stream()
-                                .map(PassArea::getAreaCode)
-                                .toList();
-                try {
-                    logClient.createIssuedLog(
-                            pass.getTenantId(),
-                            pass.getMemberId(),
-                            member.getMemberName(),
-                            member.getMemberContact(),
-                            pass.getId(),
-                            pass.getStartAt(),
-                            pass.getExpiredAt(),
-                            pass.getVisitCategory(),
-                            areaCodes);
-                } catch (Exception e) {
-                    log.error("로그 전송 실패: {}", e.getMessage());
-                }
-                fcmService.sendNotification(
-                        new FcmSendRequest(
-                                member.getFcmToken(),
-                                GUARDIAN_APPROVED_NOTIFICATION_TITLE,
-                                String.format(
-                                        GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
-                                        member.getMemberName())));
-                memberNotificationRepository.save(
-                        MemberNotification.createMemberNotification(
-                                member.getMemberId(),
-                                GUARDIAN_APPROVED_NOTIFICATION_TITLE,
-                                String.format(
-                                        GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
-                                        member.getMemberName())));
-                if (patientMember != null) {
-                    fcmService.sendNotification(
-                            new FcmSendRequest(
-                                    patientMember.getFcmToken(),
-                                    GUARDIAN_APPROVED_NOTIFICATION_TITLE,
-                                    String.format(
-                                            GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
-                                            member.getMemberName())));
-                    memberNotificationRepository.save(
-                            MemberNotification.createMemberNotification(
-                                    patientMember.getMemberId(),
-                                    GUARDIAN_APPROVED_NOTIFICATION_TITLE,
-                                    String.format(
-                                            GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
-                                            member.getMemberName())));
-                }
+
             } else if (issuanceStatus == IssuanceStatus.REJECTED) {
+
+                pass.updateStatus(IssuanceStatus.REJECTED);
+                pass = passRepository.save(pass);
+
                 fcmService.sendNotification(
                         new FcmSendRequest(
                                 member.getFcmToken(),
@@ -337,18 +324,9 @@ public class PassServiceImpl implements PassService {
 
         PatientResponse patient = patientClient.getPatientById(patientId);
 
-        String didConnectionId = null;
-
         List<AreaResponse> areas =
                 patient.getAreasList().stream().map(areaClient::getAreaById).toList();
         List<String> areaCodes = areas.stream().map(AreaResponse::getAreaCode).toList();
-
-        try {
-            // TODO: 실제 connection id 가져올 부분
-            didConnectionId = "c76e52c9-a3f9-4a59-b299-be22a0ab36b7";
-        } catch (Exception e) {
-            log.warn("DID Connection ID를 가져오는 데 실패했습니다: {}", e.getMessage());
-        }
 
         Pass pass =
                 Pass.createPass(
@@ -360,7 +338,7 @@ public class PassServiceImpl implements PassService {
                         patientId,
                         visitCategory,
                         status,
-                        didConnectionId);
+                        null);
         passRepository.save(pass);
 
         List<PassArea> passAreas =
@@ -406,22 +384,6 @@ public class PassServiceImpl implements PassService {
                                     patient.getName())));
         }
 
-        if (status == IssuanceStatus.ISSUED) {
-            try {
-                logClient.createIssuedLog(
-                        tenantId,
-                        memberId,
-                        member.getMemberName(),
-                        member.getMemberContact(),
-                        pass.getId(),
-                        startAt,
-                        expiredAt,
-                        visitCategory,
-                        areaCodes);
-            } catch (Exception e) {
-                log.error("로그 전송 실패: {}", e.getMessage());
-            }
-        }
         return new PassCreateResponse(pass.getId());
     }
 
