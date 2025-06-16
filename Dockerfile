@@ -1,7 +1,6 @@
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:21-jdk
 
-RUN apk update && apk upgrade --no-cache
-RUN apk add curl
+RUN apt-get update && apt-get install -y curl
 
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
