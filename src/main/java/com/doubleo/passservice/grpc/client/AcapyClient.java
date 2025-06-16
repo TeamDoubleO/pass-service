@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AcapyClient {
 
-    @GrpcClient("acapy-service")
+    @GrpcClient("didagent-service")
     private AcapyServiceGrpc.AcapyServiceBlockingStub blockingStub;
 
     public boolean issueVc(String tenantId, Long passId, Long memberId) {
