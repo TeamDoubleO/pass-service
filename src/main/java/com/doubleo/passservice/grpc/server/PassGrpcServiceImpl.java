@@ -141,4 +141,40 @@ public class PassGrpcServiceImpl extends PassServiceImplBase {
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void getConnectionIdByPassId(
+            GetConnectionIdByPassIdRequest request,
+            StreamObserver<GetConnectionIdByPassIdResponse> responseObserver) {
+        String tenantId = request.getTenantId();
+        long passId = request.getPassId();
+
+        try {
+            Pass pass =
+                    passRepository
+                            .findById(passId)
+                            .orElseThrow(() -> new CommonException(PassErrorCode.PASS_NOT_FOUND));
+
+            String connectionId = pass.getDidConnectionId();
+            if (connectionId == null) {
+                throw new CommonException(PassErrorCode.CONNECTION_ID_NOT_ASSIGNED);
+            }
+
+            GetConnectionIdByPassIdResponse response =
+                    GetConnectionIdByPassIdResponse.newBuilder()
+                            .setConnectionId(connectionId)
+                            .build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            log.error(
+                    "[{}] connectionId 조회 실패 - passId: {}, error: {}",
+                    tenantId,
+                    passId,
+                    e.getMessage());
+            responseObserver.onError(e);
+        }
+    }
 }
