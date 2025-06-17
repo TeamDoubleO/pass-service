@@ -21,10 +21,10 @@ import io.grpc.stub.StreamObserver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import net.devh.boot.grpc.server.service.GrpcService;
 
 @Slf4j
-@Service
+@GrpcService
 @RequiredArgsConstructor
 public class PassGrpcServiceImpl extends PassServiceImplBase {
 
