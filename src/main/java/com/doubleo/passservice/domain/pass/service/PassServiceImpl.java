@@ -246,7 +246,7 @@ public class PassServiceImpl implements PassService {
                 log.warn("환자 멤버가 존재하지 않아 알림을 생략합니다.");
             }
 
-            if (issuanceStatus == IssuanceStatus.ISSUED) {
+            if (issuanceStatus == IssuanceStatus.PROCESSING) {
 
                 try {
                     boolean success =
