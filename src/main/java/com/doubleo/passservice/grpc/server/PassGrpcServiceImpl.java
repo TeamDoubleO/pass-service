@@ -8,6 +8,7 @@ import com.doubleo.passservice.domain.notification.service.FcmService;
 import com.doubleo.passservice.domain.pass.domain.Pass;
 import com.doubleo.passservice.domain.pass.domain.PassArea;
 import com.doubleo.passservice.domain.pass.enums.IssuanceStatus;
+import com.doubleo.passservice.domain.pass.enums.VisitCategory;
 import com.doubleo.passservice.domain.pass.repository.PassAreaRepository;
 import com.doubleo.passservice.domain.pass.repository.PassRepository;
 import com.doubleo.passservice.global.exception.CommonException;
@@ -59,14 +60,6 @@ public class PassGrpcServiceImpl extends PassServiceImplBase {
 
         PatientResponse patient = patientClient.getPatientById(pass.getPatientId());
 
-        MemberResponse patientMember = null;
-        try {
-            patientMember =
-                    memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
-        } catch (Exception e) {
-            log.warn("환자 멤버가 존재하지 않아 알림을 생략합니다.");
-        }
-
         UpdateConnectionStatusResponse response;
 
         try {
@@ -110,33 +103,45 @@ public class PassGrpcServiceImpl extends PassServiceImplBase {
             log.error("로그 전송 실패: {}", e.getMessage());
         }
 
-        fcmService.sendNotification(
-                new FcmSendRequest(
-                        member.getFcmToken(),
-                        GUARDIAN_APPROVED_NOTIFICATION_TITLE,
-                        String.format(
-                                GUARDIAN_APPROVED_NOTIFICATION_CONTENT, member.getMemberName())));
-        memberNotificationRepository.save(
-                MemberNotification.createMemberNotification(
-                        member.getMemberId(),
-                        GUARDIAN_APPROVED_NOTIFICATION_TITLE,
-                        String.format(
-                                GUARDIAN_APPROVED_NOTIFICATION_CONTENT, member.getMemberName())));
-        if (patientMember != null) {
+        MemberResponse patientMember = null;
+        try {
+            patientMember =
+                    memberClient.getMemberByNameAndRegNo(patient.getName(), patient.getRegNo());
+        } catch (Exception e) {
+            log.warn("환자 멤버가 존재하지 않아 알림을 생략합니다.");
+        }
+
+        if (pass.getVisitCategory() == VisitCategory.GUARDIAN) {
             fcmService.sendNotification(
                     new FcmSendRequest(
-                            patientMember.getFcmToken(),
+                            member.getFcmToken(),
                             GUARDIAN_APPROVED_NOTIFICATION_TITLE,
                             String.format(
                                     GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
                                     member.getMemberName())));
             memberNotificationRepository.save(
                     MemberNotification.createMemberNotification(
-                            patientMember.getMemberId(),
+                            member.getMemberId(),
                             GUARDIAN_APPROVED_NOTIFICATION_TITLE,
                             String.format(
                                     GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
                                     member.getMemberName())));
+            if (patientMember != null) {
+                fcmService.sendNotification(
+                        new FcmSendRequest(
+                                patientMember.getFcmToken(),
+                                GUARDIAN_APPROVED_NOTIFICATION_TITLE,
+                                String.format(
+                                        GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
+                                        member.getMemberName())));
+                memberNotificationRepository.save(
+                        MemberNotification.createMemberNotification(
+                                patientMember.getMemberId(),
+                                GUARDIAN_APPROVED_NOTIFICATION_TITLE,
+                                String.format(
+                                        GUARDIAN_APPROVED_NOTIFICATION_CONTENT,
+                                        member.getMemberName())));
+            }
         }
         responseObserver.onNext(response);
         responseObserver.onCompleted();
