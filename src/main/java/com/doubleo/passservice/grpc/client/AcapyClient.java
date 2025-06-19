@@ -12,10 +12,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class AcapyClient {
 
-    @GrpcClient("acapy-service")
+    @GrpcClient("did-agent")
     private AcapyServiceGrpc.AcapyServiceBlockingStub blockingStub;
 
     public boolean issueVc(String tenantId, Long passId, Long memberId) {
+
+        log.info(
+                "[AcapyClient] issueVc 호출됨 - tenantId: {}, passId: {}, memberId: {}",
+                tenantId,
+                passId,
+                memberId);
+
         VcIssueRequest request =
                 VcIssueRequest.newBuilder()
                         .setTenantId(tenantId)
@@ -24,6 +31,11 @@ public class AcapyClient {
                         .build();
 
         VcIssueResponse response = blockingStub.issueVc(request);
+
+        log.info(
+                "[AcapyClient] VC 발급 응답 - isInvitationCreated: {}",
+                response.getIsInvitationCreated());
+
         return response.getIsInvitationCreated();
     }
 }
